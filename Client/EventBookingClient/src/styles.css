@@ -37,8 +37,8 @@
 .gradient {
   height: fit-content;
   z-index: 3;
+  height: 100%;
   width: 100%;
-  max-width: 640px;
   position: absolute;
   content: "";
   width: 100%;
@@ -46,6 +46,7 @@
   filter: blur(100px) saturate(150%);
   top: 80px;
   opacity: 0.15;
+  background-color: #b9b6b6;
 }
 
 @media screen and (max-width: 640px) {
@@ -108,7 +109,6 @@
   color: white;
 }
 
-/* Typography */
 .head_text {
   margin-top: 1.25rem;
   font-size: 3rem;
@@ -242,18 +242,13 @@
   outline: none;
 }
 
-.logo_text {
-  display: none;
-}
-
-@media screen and (min-width: 640px) {
-  .logo_text {
+.logo_text {    
     display: block;
     font-family: "Caveat Brush", cursive !important;
     font-weight: 600;
     letter-spacing: 0.05em;
-  }
 }
+
 
 .dropdown {
   position: absolute;
