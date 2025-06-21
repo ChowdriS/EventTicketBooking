@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { API_BASE_URL } from '../../shared/constants';
+import { API_BASE_URL } from '../../misc/constants';
 import { ApiResponse } from '../../models/api-response.model';
 import { Observable } from 'rxjs';
 

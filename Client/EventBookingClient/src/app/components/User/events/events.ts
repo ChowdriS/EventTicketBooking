@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
-import { EventService } from '../../services/Event/event';
-import { ApiResponse, PagedResponse } from '../../models/api-response.model';
-import { AppEvent } from '../../models/event.model';
+import { EventService } from '../../../services/Event/event';
+import { ApiResponse, PagedResponse } from '../../../models/api-response.model';
+import { AppEvent } from '../../../models/event.model';
 import { RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 

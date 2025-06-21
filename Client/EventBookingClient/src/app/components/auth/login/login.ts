@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Auth } from '../../services/Auth/auth';
+import { Auth } from '../../../services/Auth/auth';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ApiResponse } from '../../models/api-response.model';
-import { Getrole } from '../../shared/Token';
+import { ApiResponse } from '../../../models/api-response.model';
+import { Getrole } from '../../../misc/Token';
 
 @Component({
   selector: 'app-login',

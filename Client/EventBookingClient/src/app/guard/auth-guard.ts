@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { Auth } from '../services/Auth/auth';
-import { Getrole } from '../shared/Token';
+import { Getrole } from '../misc/Token';
 
 @Injectable({
   providedIn: 'root'

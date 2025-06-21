@@ -1,8 +1,8 @@
 import { Component, signal } from '@angular/core';
-import { EventService } from '../../services/Event/event';
-import { AppEvent } from '../../models/event.model';
+import { EventService } from '../../../services/Event/event';
+import { AppEvent } from '../../../models/event.model';
 import { Router, RouterLink } from '@angular/router';
-import { ApiResponse } from '../../models/api-response.model';
+import { ApiResponse } from '../../../models/api-response.model';
 import { CommonModule } from '@angular/common';
 
 @Component({

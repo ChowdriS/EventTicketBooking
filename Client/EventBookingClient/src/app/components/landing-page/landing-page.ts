@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Auth } from '../services/Auth/auth';
-import { Getrole } from '../shared/Token';
+import { Auth } from '../../services/Auth/auth';
+import { Getrole } from '../../misc/Token';
 
 @Component({
   selector: 'app-landing-page',
