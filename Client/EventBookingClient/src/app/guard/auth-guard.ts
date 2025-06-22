@@ -36,3 +36,19 @@ export class UserGuard implements CanActivate {
     return false;
   }
 }
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ManagerGuard implements CanActivate {
+  constructor(private router: Router) {}
+  canActivate(): boolean {
+    const token = localStorage.getItem('token');
+    var role = Getrole(token);
+    if (role == 'Manager') {
+      return true;
+    }
+    this.router.navigate(['/login']);
+    return false;
+  }
+}

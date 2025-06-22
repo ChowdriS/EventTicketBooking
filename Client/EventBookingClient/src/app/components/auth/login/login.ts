@@ -20,14 +20,23 @@ export class Login implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+    this.roleBasedRoute();
+  }
+
+  roleBasedRoute(){
     if (this.authService.getToken()) {
       let token = this.authService.getToken();
       // console.log(token);
       let role = Getrole(token);
       if(role === 'User')
         this.router.navigate(['/user']);
+      if(role === 'Manager')
+        this.router.navigate(['/manager']);
+      if(role === 'Admin')
+        this.router.navigate(['/admin']);
     }
   }
+
   constructor(private fb: FormBuilder,private authService: Auth, private router: Router) {}
 
   onLogin() {
@@ -37,7 +46,7 @@ export class Login implements OnInit {
           if (res.success && res.data?.token) {
             alert('Login Successful!');
             this.authService.setToken(res.data.token);
-            this.router.navigate(['/user']);
+            this.roleBasedRoute();
           } else {
             alert(res.message || 'Login failed.');
           }

@@ -11,15 +11,16 @@ import { Getrole } from '../../misc/Token';
   standalone: true
 })
 export class LandingPage {
-  // constructor(private authService : Auth,private router : Router){}
-  //     ngOnInit() {
-  //       if (this.authService.getToken()) {
-  //         let token = this.authService.getToken();
-  //         // console.log(token);
-  //         let role = Getrole(token);
-  //         if(role === 'User')
-  //           this.router.navigate(['/user']);
-  //       }
-  //   }
-
+  constructor(private authService : Auth,private router : Router){}
+      ngOnInit() {
+        if (this.authService.getToken()) {
+          let token = this.authService.getToken();
+          // console.log(token);
+          let role = Getrole(token);
+          if(role === 'User')
+            this.router.navigate(['/user']);
+          else(role === 'Manager')
+            this.router.navigate(['/manager']);
+        }
+    }
 }

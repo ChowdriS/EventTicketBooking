@@ -1,43 +1,43 @@
-enum UserRole
+export enum UserRole
 {
     Admin,
     User,
     Manager
 }
 
-enum EventType
+export enum EventTypeEnum
 {
     Seatable = 0,
     NonSeatable = 1
 }
 
-enum EventStatus
+export enum EventStatus
 {
     Active = 0,
     Cancelled = 1,
     Completed = 2
 }
-enum BookedSeatStatus
+export enum BookedSeatStatus
 {
     Booked = 0,
     Cancelled = 1
 }
 
-enum TicketStatus
+export enum TicketStatus
 {
     Booked = 0,
     Cancelled = 1,
     Used = 2
 }
 
-enum TicketTypeEnum
+export enum TicketTypeEnum
 {
     Regular = 0,
     VIP = 1,
     EarlyBird = 2
 }
 
-enum PaymentTypeEnum
+export enum PaymentTypeEnum
 {
     Cash = 0,
     CreditCard = 1,
@@ -45,7 +45,7 @@ enum PaymentTypeEnum
     UPI = 3
 }
 
-enum PaymentStatusEnum
+export enum PaymentStatusEnum
 {
     Paid = 0,
     Failed = 1,

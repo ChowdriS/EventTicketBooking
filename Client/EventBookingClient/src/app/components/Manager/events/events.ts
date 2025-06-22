@@ -2,10 +2,9 @@ import { Component, signal } from '@angular/core';
 import { EventService } from '../../../services/Event/event.service';
 import { ApiResponse, PagedResponse } from '../../../models/api-response.model';
 import { AppEvent } from '../../../models/event.model';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import {EventStatus, EventTypeEnum, TicketTypeEnum} from '../../../models/enum';
-import { EventStatusPipe, EventTypePipe, TicketTypePipe } from '../../../misc/pipes';
 
 @Component({
   selector: 'app-events',
@@ -20,14 +19,14 @@ export class Events {
   totalPages = signal(1);
   pageSize = 4;
 
-  constructor(private eventsService: EventService) {}
+  constructor(private eventsService: EventService,public router: Router) {}
 
   ngOnInit() {
     this.loadEvents();
   }
 
   loadEvents() {
-    this.eventsService.getEvents(this.pageNumber(), this.pageSize).subscribe({
+    this.eventsService.getManagerEvents(this.pageNumber(), this.pageSize).subscribe({
       next: (res: ApiResponse<PagedResponse<any>>) => {
         const rawItems = res.data?.items?.$values || [];
 

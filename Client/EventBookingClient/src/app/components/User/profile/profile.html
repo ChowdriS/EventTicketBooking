@@ -1,0 +1,180 @@
+<section class="max-w-3xl mx-auto mt-8 px-4 sm:px-6 lg:px-8 py-10 bg-white rounded-xl shadow-2xl space-y-6">
+  <h2 class="text-2xl font-bold mb-4 orange_gradient">User Profile</h2>
+
+  <div class="p-4 border rounded-xl bg-gray-50 space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Email</label>
+      <p class="text-gray-800">{{ user!.email }}</p>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Role</label>
+      <p class="text-gray-800 capitalize">{{ user!.role}}</p>
+    </div>
+
+    <form [formGroup]="usernameForm">
+      <label class="block text-sm font-medium text-gray-700">Username</label>
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2 mt-1">
+        <input
+          type="text"
+          class="form-input w-full"
+          formControlName="username"
+          [readonly]="!isEditingUsername"
+        />
+        <button
+          type="button"
+          class="black_btn"
+          (click)="isEditingUsername ? saveUsername() : isEditingUsername = true"
+        >
+          {{ isEditingUsername ? 'Save' : 'Edit' }}
+        </button>
+      </div>
+      <p *ngIf="usernameForm.get('username')?.invalid && isEditingUsername" class="text-sm text-red-600 mt-1">
+        Username is required.
+      </p>
+    </form>
+  </div>
+
+  <div class="space-y-2">
+    <button class="black_btn" (click)="isChangingPassword = !isChangingPassword">
+      {{ isChangingPassword ? 'Hide Password Form' : 'Change Password' }}
+    </button>
+
+    <form *ngIf="isChangingPassword" [formGroup]="passwordForm" class="mt-4 space-y-4 bg-gray-50 p-4 border rounded-xl">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Old Password</label>
+        <input
+          type="password"
+          class="form-input w-full mt-1"
+          formControlName="oldPassword"
+        />
+        <p *ngIf="passwordForm.get('oldPassword')?.invalid && passwordForm.get('oldPassword')?.touched"
+           class="text-sm text-red-600 mt-1">
+          Old password is required.
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">New Password</label>
+        <input
+          type="password"
+          class="form-input w-full mt-1"
+          formControlName="newPassword"
+        />
+        <p *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched"
+           class="text-sm text-red-600 mt-1">
+          New password must be at least 6 characters.
+        </p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-4 mt-4">
+        <button
+          type="button"
+          class="black_btn"
+          (click)="changePassword()"
+          [disabled]="passwordForm.invalid"
+        >
+          Save Password
+        </button>
+        <button
+          type="button"
+          class="text-sm text-red-600 underline"
+          (click)="cancelPasswordChange()"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto mt-12 px-4 sm:px-6 lg:px-8 py-10">
+  <h2 class="text-2xl font-semibold mb-6 orange_gradient">My Tickets</h2>
+
+  <div *ngIf="tickets.length > 0; else noTickets" class="overflow-x-auto bg-white rounded-xl shadow-lg p-4">
+    <table class="min-w-full divide-y divide-gray-200 text-sm text-left">
+  <thead class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider">
+    <tr>
+      <th class="px-4 py-3 text-left rounded-tl-xl">Event</th>
+      <th class="px-4 py-3 text-left">Type</th>
+      <th class="px-4 py-3 text-center">Qty</th>
+      <th class="px-4 py-3 text-right">Total Price</th>
+      <th class="px-4 py-3 text-center">Booked At</th>
+      <th class="px-4 py-3 text-center">Status</th>
+      <th class="px-4 py-3 text-right rounded-tr-xl">Actions</th>
+    </tr>
+  </thead>
+  <tbody class="divide-y divide-gray-100">
+    <tr
+      *ngFor="let ticket of tickets"
+      [ngClass]="{
+        'bg-red-50 text-gray-400': ticket.payment.status === 3,
+        'hover:bg-gray-50 transition': ticket.payment.status !== 3
+      }"
+    >
+      <td class="px-4 py-4 font-medium text-gray-800">{{ ticket.eventTitle }}</td>
+      <td class="px-4 py-4 text-gray-700">{{ ticket.ticketType }}</td>
+      <td class="px-4 py-4 text-center">{{ ticket.quantity }}</td>
+      <td class="px-4 py-4 text-right font-semibold">₹{{ ticket.totalPrice }}</td>
+      <td class="px-4 py-4 text-center text-gray-600">
+        {{ ticket.bookedAt | date: 'medium' }}
+      </td>
+      <td class="px-4 py-4 text-center font-semibold">
+        <span *ngIf="ticket.payment.status === 3" class="text-red-500">Cancelled</span>
+        <span *ngIf="ticket.payment.status !== 3" class="text-green-600">Booked</span>
+      </td>
+      @if(ticket.payment.status !== 3)
+      {<td class="px-4 py-4">
+        <div class="flex justify-end gap-2 flex-wrap">
+            <button
+            class="outline_btn px-3 py-1"
+            (click)="cancelTicket(ticket.id)"
+            [disabled]="ticket.payment.status === 3"
+            >
+            Cancel
+            </button>
+            <button class="black_btn px-3 py-1" (click)="exportTicket(ticket.id)">
+            Export
+            </button>
+        </div>
+        </td>}
+        @else {
+            <td class="px-4 py-4 text-center font-semibold">
+                <span class="text-red-500">No Action on Cancelled Tickets</span>
+            </td>
+        }
+
+    </tr>
+  </tbody>
+</table>
+
+
+    <div class="flex justify-between items-center mt-6">
+      <button
+        class="outline_btn"
+        (click)="changePage(currentPage - 1)"
+        [disabled]="currentPage === 1"
+      >
+        Prev
+      </button>
+
+      <span class="text-gray-700 font-medium">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+
+      <button
+        class="black_btn"
+        (click)="changePage(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+
+  <ng-template #noTickets>
+    <p class="text-gray-500 text-center mt-6 italic">
+      You haven’t booked any tickets yet.
+    </p>
+  </ng-template>
+</section>

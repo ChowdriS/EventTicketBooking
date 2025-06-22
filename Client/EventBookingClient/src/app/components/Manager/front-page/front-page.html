@@ -1,5 +1,5 @@
 <section
-    class="w-full h-[300px] bg-gray-200 rounded-xl shadow-inner mt-8 flex items-center justify-center text-gray-500">
+    class="w-full h-[300px] bg-gray-200 rounded-xl shadow-inner flex items-center justify-center text-gray-500">
     <p class="text-lg font-medium">[ Upcoming Events Slider Coming Soon ]</p>
 </section>
 <section class="mt-12 max-w-6xl mx-auto px-4">
@@ -19,14 +19,15 @@
             <ul class="text-sm space-y-1">
                 @for (ticket of event.ticketTypes; track ticket.id) {
                 <li class="text-gray-700">
-                    <span class="font-medium">{{ ticketTypeToString(ticket.typeName) }} </span> |
-                    ₹{{ ticket.price }} |
-                    Available: {{ ticket.totalQuantity - ticket.bookedQuantity }}
+                    <span class="font-medium">{{ ticketTypeToString(ticket.typeName) }} </span> -
+                    ₹{{ ticket.price }}&nbsp; | &nbsp;
+                    Total: {{ticket.totalQuantity}} &nbsp;|&nbsp;
+                    Booked: {{ticket.bookedQuantity }}
                 </li>
                 }
             </ul>
         </div>
-        <button class="mt-4 black_btn w-full" [routerLink]="['/user/events', event.id]">View Details</button>
+        <button class="mt-4 black_btn w-full" [routerLink]="[this.router.url,'events',event.id]">View Details</button>
     </div>
     }
     @else {

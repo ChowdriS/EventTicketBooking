@@ -21,12 +21,11 @@ export class FrontPage {
   }
   
   fetchTopEvent() {
-    this.eventsService.getEvents(1, 1).subscribe({
+    this.eventsService.getManagerEvents(1, 1).subscribe({
       next: (res: ApiResponse<PagedResponse<any>>) => {
         const rawItem = res.data?.items?.$values || [];
         const parsedEvents = rawItem.map((e: any) => new AppEvent(e));
         this.topEvent.set(parsedEvents[0]);
-        // console.log(this.topEvent())
       },
       error: () => alert("Failed to load events.")
     });
