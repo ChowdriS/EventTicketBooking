@@ -16,6 +16,10 @@ export class TicketService {
   getMyTickets(page: number, size: number): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(`${API_BASE_URL}/tickets/mine?pageNumber=${page}&pageSize=${size}`);
   }
+  
+  getTicketsByEventId(eventId:string, pageNumber:Number, pageSize:Number){
+    return this.http.get<ApiResponse>(`${API_BASE_URL}/tickets/event/${eventId}?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+  }
 
   cancelTicket(ticketId: string): Observable<ApiResponse> {
     return this.http.delete<ApiResponse>(`${API_BASE_URL}/tickets/${ticketId}/cancel`);

@@ -2,12 +2,14 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { EventService } from '../../../services/Event/event.service';
 import { TicketTypeService } from '../../../services/TicketType/ticket-type.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AppEvent } from '../../../models/event.model';
+import { EventStatus, EventTypeEnum } from '../../../models/enum';
 
 @Component({
   selector: 'app-events-by-id',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,RouterLink],
   templateUrl: './events-by-id.html',
   styleUrl: './events-by-id.css'
 })
@@ -20,13 +22,15 @@ export class EventsById implements OnInit {
   isAddingTicketType = signal(false);
   ticketTypes = signal<any[]>([]);
   loading = signal(true);
+  previousEventData = signal<AppEvent | null>(null);
 
   constructor(
     private fb: FormBuilder,
     private eventService: EventService,
     private ticketTypeService: TicketTypeService,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    public router : Router
+  ) { }
 
   ngOnInit(): void {
     this.eventId = this.route.snapshot.paramMap.get('id')!;
@@ -57,7 +61,10 @@ export class EventsById implements OnInit {
     this.eventService.getEventById(this.eventId).subscribe({
       next: (res: any) => {
         this.eventForm.patchValue(res?.data);
+        this.previousEventData.set(res.data);
+        // console.log(this.previousEventData());
         this.ticketTypes.set(res.data?.ticketTypes.$values || []);
+        // console.log(this.ticketTypes());
         this.loading.set(false);
       },
       error: () => {
@@ -73,16 +80,47 @@ export class EventsById implements OnInit {
 
   saveEvent() {
     if (this.eventForm.invalid) return;
-    this.eventService.updateEvent(this.eventId, this.eventForm.value).subscribe({
-      next: () => {
-        alert('Event updated successfully');
-        this.isEditingEvent.set(false);
-      },
-      error: () => {
-        alert('Failed to update event');
-      }
-    });
+    console.log(this.previousEventData());
+    const formValue = this.eventForm.value;
+    const payload: any = {};
+    payload.title = formValue.title !== this.previousEventData()?.title ? formValue.title : null;
+    payload.description = formValue.description !== this.previousEventData()?.description ? formValue.description : null;
+    payload.eventDate = formValue.eventDate !== this.previousEventData()?.eventDate ? formValue.eventDate : null;
+    payload.eventType = formValue.eventType !== this.previousEventData()?.eventType ? EventTypeEnum[formValue.eventType as keyof typeof EventTypeEnum] : null;
+    payload.eventStatus = formValue.eventStatus !== this.previousEventData()?.eventStatus ? EventStatus[formValue.eventStatus as keyof typeof EventStatus] : null;
+    // let flag = false;
+    // for (let t of payload) {
+    //   if (t != null) {
+    //     flag = true;
+    //     break;
+    //   }
+    // }
+    // if (flag == false) {
+    //   alert('Nothing is Changed!');
+    // } else {
+      this.eventService.updateEvent(this.eventId, payload).subscribe({
+        next: () => {
+          alert('Event updated successfully');
+          this.isEditingEvent.set(false);
+          this.loadEventData();
+        },
+        error: () => {
+          alert('Failed to update event');
+        }
+      });
+    // }
   }
+  // eventStatusToString(status: number): string {
+  //   return EventStatus[status];
+  // }
+
+  // eventTypeToString(type: number): string {
+  //   return EventTypeEnum[type];
+  // }
+
+  // ticketTypeToString(type: number): string {
+  //   return TicketTypeEnum[type];
+  // }
 
   startAddTicketType() {
     this.isAddingTicketType.set(true);

@@ -11,7 +11,10 @@ import { FrontPage as UserFrontPage } from './components/User/front-page/front-p
 import { FrontPage as ManagerFrontPage } from './components/Manager/front-page/front-page';
 import { EventById as UserEventById } from './components/User/event-by-id/event-by-id';
 import { EventsById as ManagerEventById } from './components/Manager/events-by-id/events-by-id';
-import { Profile } from './components/User/profile/profile';
+import { Profile as UserProfile} from './components/User/profile/profile';
+import { Profile as ManagerProfile} from './components/Manager/profile/profile';
+import { Tickets as ManagerTickets} from './components/Manager/tickets/tickets';
+import { AddEvent as ManagerAddEvent} from './components/Manager/add-event/add-event';
 
 export const routes: Routes = [
   { path: 'default', component: LandingPage },
@@ -33,11 +36,11 @@ export const routes: Routes = [
       },
       {
         path: 'events/:id',
-        component: UserEventById
+        component: UserEventById,
       },
       {
         path: 'profile',
-        component: Profile
+        component: UserProfile
       }
     ]
   },
@@ -55,8 +58,20 @@ export const routes: Routes = [
         component: ManagerEvents
       },
       {
+        path: 'events/add',
+        component: ManagerAddEvent
+      },
+      {
         path: 'events/:id',
-        component: ManagerEventById
+        component: ManagerEventById,
+      },
+      {
+        path: 'events/:id/tickets',
+        component: ManagerTickets,
+      },
+      {
+        path: 'profile',
+        component: ManagerProfile
       }
     ]
   }
