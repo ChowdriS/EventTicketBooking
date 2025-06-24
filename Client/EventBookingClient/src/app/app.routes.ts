@@ -3,18 +3,24 @@ import { Login } from './components/auth/login/login';
 import { Register } from './components/auth/register/register';
 import { Home as UserHome} from './components/User/home/home';
 import { Home as ManagerHome} from './components/Manager/home/home';
+import { Home as AdminHome} from './components/Admin/home/home';
 import { LandingPage } from './components/landing-page/landing-page';
-import { AuthGuard, ManagerGuard, UserGuard } from './guard/auth-guard';
+import { AdminGuard, AuthGuard, ManagerGuard, UserGuard } from './guard/auth-guard';
 import { Events as UserEvents} from './components/User/events/events';
+import { Events as AdminEvents} from './components/Admin/events/events';
 import { Events as ManagerEvents} from './components/Manager/events/events';
 import { FrontPage as UserFrontPage } from './components/User/front-page/front-page';
+import { FrontPage as AdminFrontPage } from './components/Admin/front-page/front-page';
 import { FrontPage as ManagerFrontPage } from './components/Manager/front-page/front-page';
 import { EventById as UserEventById } from './components/User/event-by-id/event-by-id';
+import { EventById as AdminEventById } from './components/Admin/event-by-id/event-by-id';
 import { EventsById as ManagerEventById } from './components/Manager/events-by-id/events-by-id';
 import { Profile as UserProfile} from './components/User/profile/profile';
+import { Profile as AdminProfile} from './components/Admin/profile/profile';
 import { Profile as ManagerProfile} from './components/Manager/profile/profile';
 import { Tickets as ManagerTickets} from './components/Manager/tickets/tickets';
 import { AddEvent as ManagerAddEvent} from './components/Manager/add-event/add-event';
+import { AddAdmin } from './components/Admin/add-admin/add-admin';
 
 export const routes: Routes = [
   { path: 'default', component: LandingPage },
@@ -41,6 +47,33 @@ export const routes: Routes = [
       {
         path: 'profile',
         component: UserProfile
+      }
+    ]
+  },
+  {
+    path: 'admin',
+    component: AdminHome,
+    canActivate: [AuthGuard,AdminGuard],
+    children: [
+      {
+        path: '',
+        component: AdminFrontPage,
+      },
+      {
+        path: 'profile',
+        component: AdminProfile
+      },
+      {
+        path: 'add-admin',
+        component: AddAdmin
+      },
+      {
+        path: 'events',
+        component: AdminEvents
+      },
+      {
+        path: 'events/:id',
+        component: AdminEventById,
       }
     ]
   },

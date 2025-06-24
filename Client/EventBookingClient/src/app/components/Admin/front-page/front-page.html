@@ -1,0 +1,92 @@
+<section class="w-full h-[300px] bg-gray-200 rounded-xl shadow-inner flex items-center justify-center text-gray-500">
+    <p class="text-lg font-medium">[ Upcoming Events Slider Coming Soon ]</p>
+</section>
+
+
+<section class="max-w-6xl mx-auto px-4">
+    <div class=" flex-between font-bold items-center my-2">
+        <h2 class="orange_gradient text-2xl font-semibold mb-4 mt-4">Upcoming Event</h2>
+    </div>
+    @if (topEvent(); as event) {
+    <div class="bg-white rounded-xl drop-shadow-lg p-6 mb-6">
+        <h3 class="text-xl font-bold orange_gradient">{{ event.title }}</h3>
+        <p class="text-gray-600 mt-2">{{ event.description }}</p>
+        <p class="text-sm mt-1 text-gray-400">
+            📅 Date: {{ event.eventDate | date: 'medium' }}
+        </p>
+        <p class="text-sm mt-1 text-gray-400">
+            📌 Status: {{ event.eventStatus }} | Type: {{ event.eventType }}
+        </p>
+        <div class="mt-4">
+            <h4 class="font-semibold mb-2 text-orange-600">Ticket Types:</h4>
+            <ul class="text-sm space-y-1">
+                @for (ticket of event.ticketTypes; track ticket.id) {
+                <li class="text-gray-700">
+                    <span class="font-medium">{{ ticketTypeToString(ticket.typeName) }} </span> -
+                    ₹{{ ticket.price }}&nbsp; | &nbsp;
+                    Total: {{ticket.totalQuantity}} &nbsp;|&nbsp;
+                    Booked: {{ticket.bookedQuantity }}
+                </li>
+                }
+            </ul>
+        </div>
+        <button class="mt-4 black_btn w-full" [routerLink]="[this.router.url,'events',event.id]">View Details</button>
+    </div>
+    }
+    @else {
+    <p class="text-gray-400">No upcoming events found.</p>
+    }
+    <div class="text-right">
+        <a class="text-blue-600 underline text-sm" [routerLink]="[this.router.url, 'events']">View All Events →</a>
+    </div>
+</section>
+<section class="p-6">
+    <h2 class="text-2xl font-semibold orange_gradient mb-4 text-center">All Users</h2>
+
+    <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200 text-sm text-left">
+            <thead class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider">
+                <tr>
+                    <th class="px-4 py-3 rounded-tl-xl">Username</th>
+                    <th class="px-4 py-3">Email</th>
+                    <th class="px-4 py-3">Role</th>
+                    <th class="px-4 py-3 text-center">Deleted</th>
+                    <th class="px-4 py-3 text-center rounded-tr-xl">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @for (user of users(); track user.email) {
+                <tr [ngClass]="{
+              'bg-red-50 text-gray-400': user.isDeleted,
+              'hover:bg-gray-50 transition': !user.isDeleted
+            }">
+                    <td class="px-4 py-4 font-medium text-gray-800">{{ user.username }}</td>
+                    <td class="px-4 py-4 text-gray-700">{{ user.email }}</td>
+                    <td class="px-4 py-4">{{ user.role }}</td>
+                    <td class="px-4 py-4 text-center">
+                        <span [ngClass]="{
+                  'text-red-500 font-semibold': user.isDeleted,
+                  'text-green-600 font-medium': !user.isDeleted
+                }">
+                            {{ user.isDeleted ? 'Yes' : 'No' }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-4 text-center flex-center">
+                        @if(user.role == 'Admin'){
+                            <span class="orange_gradient text-sm">No Action for Admin</span>
+                        }@else {
+                            @if (!user.isDeleted) {
+                                <button class="outline_btn px-3 py-1" (click)="deleteUser(user)">
+                                    Delete
+                                </button>
+                            } @else {
+                                <span class="text-red-500 text-sm">Already Deleted</span>
+                            }
+                        }
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

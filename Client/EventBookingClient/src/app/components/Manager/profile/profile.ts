@@ -3,34 +3,91 @@ import { Component, signal, computed, ViewChild, ElementRef, AfterViewInit } fro
 import { AnalyticsService } from '../../../services/Analytics/analytics.service';
 import { CommonModule } from '@angular/common';
 import Chart from 'chart.js/auto';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { User } from '../../../models/user.model';
+import { ApiResponse } from '../../../models/api-response.model';
+import { UserService } from '../../../services/User/user-service';
+import { TicketService } from '../../../services/Ticket/ticket.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,ReactiveFormsModule],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
 export class Profile implements AfterViewInit {
   @ViewChild('earningsChart') chartRef!: ElementRef<HTMLCanvasElement>;
   private chartInstance: any;
-  
+  user!: User;
+  isEditingUsername = false;
+  isChangingPassword = false;
+  usernameForm!: FormGroup;
+  passwordForm!: FormGroup;
   earningsTableSignal = signal<{ event: string; amount: number }[]>([]);
   earningsTable = computed(() => this.earningsTableSignal());
   earningsTableTotal = computed(() => this.earningsTableSignal().reduce((sum, item) => sum + item.amount, 0));
 
-  constructor(
-    private http: HttpClient,
-    private analyticsService: AnalyticsService
-  ) {}
+
+  constructor(private http: HttpClient,
+    private analyticsService: AnalyticsService,private userService: UserService, 
+    private fb: FormBuilder, private ticketService: TicketService) { }
+
 
   ngOnInit(): void {
+    this.loadUserDetails();
     this.loadEarnings();
+    this.usernameForm = this.fb.group({
+      username: ['', Validators.required]
+    });
+
+    this.passwordForm = this.fb.group({
+      oldPassword: ['', Validators.required],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]]
+    });
   }
 
   ngAfterViewInit() {
     this.renderChart();
   }
+  loadUserDetails() {
+    this.userService.getUserDetails().subscribe((res: ApiResponse) => {
+      this.user = res.data;
+      this.usernameForm.get('username')?.setValue(this.user.username);
+    });
+  }
+
+  saveUsername() {
+    if (this.usernameForm.invalid) return;
+
+    const payload = { username: this.usernameForm.value.username };
+
+    this.userService.updateUsername(payload).subscribe({
+      next: (res: ApiResponse) => {
+        this.user = res.data;
+        this.isEditingUsername = false;
+      },
+      error: () => alert('Failed to update username.')
+    });
+  }
+
+  changePassword() {
+    if (this.passwordForm.invalid) return;
+
+    this.userService.changePassword(this.passwordForm.value).subscribe({
+      next: (res: ApiResponse) => {
+        alert('Password changed successfully!');
+        this.isChangingPassword = false;
+        this.passwordForm.reset();
+      },
+      error: () => alert('Failed to change password.')
+    });
+  }
+  
+    cancelPasswordChange() {
+      this.isChangingPassword = false;
+      this.passwordForm.reset();
+    }
 
   loadEarnings() {
     this.analyticsService.getMyEarning().subscribe({

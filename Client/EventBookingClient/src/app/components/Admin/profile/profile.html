@@ -1,5 +1,8 @@
 <section class="max-w-3xl mx-auto mt-8 px-4 sm:px-6 lg:px-8 py-10 bg-white rounded-xl shadow-2xl space-y-6">
-  <h2 class="text-2xl font-bold mb-4 orange_gradient">User Profile</h2>
+    <div class=" flex-between items-center text-center">
+        <h2 class="text-2xl font-bold mb-4 orange_gradient mt-0.5">User Profile</h2>
+        <button [routerLink]="['../add-admin']" class=" outline_btn" >Add Admin</button>
+    </div>
 
   <div class="p-4 border rounded-xl bg-gray-50 space-y-4">
     <div>
@@ -15,15 +18,20 @@
     <form [formGroup]="usernameForm">
       <label class="block text-sm font-medium text-gray-700">Username</label>
       <div class="flex flex-col sm:flex-row sm:items-center gap-2 mt-1">
-        <input
-          type="text"
-          class="form-input w-full"
-          formControlName="username"
-          [readonly]="!isEditingUsername"
-        />
+        @if(isEditingUsername){
+            <input
+              type="text"
+              class="form_input w-full"
+              formControlName="username"
+              [readonly]="!isEditingUsername"
+            />
+        }
+        @else {
+             <p class="text-gray-800 w-full capitalize">{{ user!.username}}</p>
+        }
         <button
           type="button"
-          class="black_btn"
+          class="outline_btn"
           (click)="isEditingUsername ? saveUsername() : isEditingUsername = true"
         >
           {{ isEditingUsername ? 'Save' : 'Edit' }}
@@ -85,50 +93,5 @@
         </button>
       </div>
     </form>
-  </div>
-</section>
-
-<section class="mt-10 p-6 bg-white rounded-2xl shadow-xl max-w-6xl mx-auto space-y-6">
-  <h2 class="text-2xl font-bold orange_gradient">Earnings Summary</h2>
-
-  <div class="flex flex-col lg:flex-row gap-6 items-center lg:items-start justify-between">
-    <div class="w-full lg:w-[45%] flex justify-center">
-      <div class="chart-container w-full max-w-sm" style="height: 400px;">
-        <canvas #earningsChart></canvas>
-      </div>
-    </div>
-
-    <div class="w-full lg:w-[55%] overflow-x-auto">
-      <table class="min-w-full text-sm border border-gray-300 rounded-xl overflow-hidden shadow-sm">
-        <thead class="bg-gray-100 text-gray-700">
-          <tr>
-            <th class="py-3 px-4 border-b text-left">Event</th>
-            <th class="py-3 px-4 border-b text-right">Earnings (₹)</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (item of earningsTable(); track item.event; let i = $index) {
-            <tr class="hover:bg-gray-50">
-              <td class="py-2 px-4 border-b">{{ item.event }}</td>
-              <td class="py-2 px-4 border-b text-right">{{ item.amount | number:'1.2-2' }}</td>
-            </tr>
-          }
-          @empty {
-            <tr>
-              <td colspan="2" class="py-4 px-4 text-center text-gray-500">No earnings data available</td>
-            </tr>
-          }
-        </tbody>
-
-        @if (earningsTable().length > 0) {
-          <tfoot class="bg-gray-50 font-semibold">
-            <tr>
-              <td class="py-3 px-4 border-t">Total</td>
-              <td class="py-3 px-4 border-t text-right">₹{{ earningsTableTotal() }}</td>
-            </tr>
-          </tfoot>
-        }
-      </table>
-    </div>
   </div>
 </section>

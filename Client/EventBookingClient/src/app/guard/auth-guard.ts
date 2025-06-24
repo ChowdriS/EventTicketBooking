@@ -52,3 +52,19 @@ export class ManagerGuard implements CanActivate {
     return false;
   }
 }
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AdminGuard implements CanActivate {
+  constructor(private router: Router) {}
+  canActivate(): boolean {
+    const token = localStorage.getItem('token');
+    var role = Getrole(token);
+    if (role == 'Admin') {
+      return true;
+    }
+    this.router.navigate(['/login']);
+    return false;
+  }
+}

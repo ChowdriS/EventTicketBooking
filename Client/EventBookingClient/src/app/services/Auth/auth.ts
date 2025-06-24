@@ -29,4 +29,8 @@ export class Auth {
   logout(): void {
     localStorage.removeItem('token');
   }
+  
+  addAdmin(payload: any) {
+    return this.http.post<ApiResponse>(`${API_BASE_URL}/users/admin`, payload);
+  }
 }

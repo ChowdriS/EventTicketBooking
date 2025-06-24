@@ -1,0 +1,39 @@
+  <section class="flex-1 flex flex-col justify-center items-center px-10 mt-24">
+    <h1 class="logo_text text-3xl orange_gradient mb-4">Add Admin</h1>
+    <form class="w-full max-w-sm space-y-4" [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <div>
+        <input class="form_input" placeholder="Username" formControlName="username" />
+        <div *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+          class="text-red-500 text-sm mt-1">
+          Username is required.
+        </div>
+      </div>
+
+      <div>
+        <input class="form_input" placeholder="Email" formControlName="email" type="email" />
+        <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+          class="text-red-500 text-sm mt-1">
+          Valid email is required.
+        </div>
+      </div>
+
+      <div>
+        <input class="form_input" type="password" placeholder="Password" formControlName="password" />
+        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+          class="text-red-500 text-sm mt-1">
+          Password must be at least 6 characters.
+        </div>
+      </div>
+
+      <div>
+        <input class="form_input" type="password" placeholder="Confirm Password" formControlName="confirmPassword" />
+        <div *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched"
+          class="text-red-500 text-sm mt-1">
+          Passwords do not match.
+        </div>
+      </div>
+
+      <button class="black_btn w-full" type="submit" [disabled]="registerForm.invalid">Add Admin</button>
+    </form>
+
+</section>

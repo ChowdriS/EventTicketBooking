@@ -1,0 +1,87 @@
+<section class="max-w-5xl mx-auto p-6 space-y-8 bg-white shadow-xl rounded-2xl mt-10">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold orange_gradient">Event Details</h2>
+  </div>
+
+  @if (eventForm) {
+    <form [formGroup]="eventForm" class="grid md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Title</label>
+        <input type="text" formControlName="title" class="form_input w-full" [readonly]="true" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Description</label>
+        <input type="text" formControlName="description" class="form_input w-full" [readonly]="true" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Date</label>
+        <input type="datetime" formControlName="eventDate" class="form_input w-full" [readonly]="true" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+        @if(true){
+            <input type="text" formControlName="eventStatus" class="form_input w-full" [readonly]="true" />
+        }
+        @else{
+        <select formControlName="eventStatus" class="form_select w-full" [disabled]="true">
+          <option value="Active">Active</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Completed">Completed</option>
+        </select>
+        }
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+        @if(true){
+            <input type="text" formControlName="eventType" class="form_input w-full" [readonly]="true" />
+        }
+        @else{
+            <select formControlName="eventType" class="form_select w-full">
+              <option value="Seatable">Seatable</option>
+              <option value="NonSeatable">Non-Seatable</option>
+            </select>
+        }
+      </div>
+    </form>
+  }
+
+  <div>
+    <div class="flex justify-between items-center mt-8 mb-4">
+      <h3 class="text-xl font-semibold text-gray-800">Ticket Types</h3>
+    </div>
+
+    @if (ticketTypes().length > 0) {
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-left border rounded-xl overflow-hidden">
+          <thead class="bg-gray-100 text-gray-700 text-center">
+            <tr>
+              <th class="py-3 px-4">Type</th>
+              <th class="py-3 px-4">Price</th>
+              <th class="py-3 px-4">Total Qty</th>
+              <th class="py-3 px-4">Booked</th>
+              <th class="py-3 px-4">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of ticketTypes(); track t.id) {
+              <tr class="hover:bg-gray-200 text-center">
+                <td class="py-2">{{ t.typeName == 0 ? 'Regular' : 'VIP' }}</td>
+                <td class="py-2">₹{{ t.price }}</td>
+                <td class="py-2">{{ t.totalQuantity }}</td>
+                <td class="py-2">{{ t.bookedQuantity ?? 0 }}</td>
+                <td class="py-2">{{ t.description }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="text-gray-500 italic mt-4">No ticket types added yet.</p>
+    }
+
+  </div>
+</section>

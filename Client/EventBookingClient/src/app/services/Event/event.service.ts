@@ -25,7 +25,6 @@ export class EventService {
     return this.http.post<ApiResponse<AppEvent>>(`${API_BASE_URL}/events`,payload);
   }
   getFilteredEvents(searchElement: string, filterDate: string, pageNumber: number, pageSize: number) {
-    console.log(searchElement," ",filterDate)
     let url = `${API_BASE_URL}/events/filter?`;
     if (searchElement && searchElement.trim() !== "") {
       url += `searchElement=${searchElement}`;
