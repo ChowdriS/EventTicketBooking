@@ -24,6 +24,9 @@ export class EventService {
   addEvent(payload: any): Observable<ApiResponse<AppEvent>>{
     return this.http.post<ApiResponse<AppEvent>>(`${API_BASE_URL}/events`,payload);
   }
+  deleteEvent(id:string): Observable<ApiResponse<AppEvent>>{
+    return this.http.delete<ApiResponse<AppEvent>>(`${API_BASE_URL}/events/${id}`);
+  }
   getFilteredEvents(searchElement: string, filterDate: string, pageNumber: number, pageSize: number) {
     let url = `${API_BASE_URL}/events/filter?`;
     if (searchElement && searchElement.trim() !== "") {
@@ -39,7 +42,6 @@ export class EventService {
       url += "&date=";
     }
     return this.http.get<ApiResponse<PagedResponse<any>>>(`${url}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
-    // return this.http.get<ApiResponse<PagedResponse<any>>>(`${API_BASE_URL}/events/filter?searchElement=&date=&pageNumber=1&pageSize=10`);
   }
 
 }

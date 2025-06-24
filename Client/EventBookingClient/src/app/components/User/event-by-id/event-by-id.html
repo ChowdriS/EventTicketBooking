@@ -7,11 +7,10 @@
     <p><strong>Status:</strong> {{ event()?.eventStatus }}</p>
     <p><strong>Type:</strong> {{ event()?.eventType }}</p>
   </div>
-
   <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
     <div>
       <label class="block text-sm font-medium">Ticket Type</label>
-      <select class="form-select w-full mt-1" formControlName="ticketTypeId">
+      <select class="form_select w-full mt-1" formControlName="ticketTypeId">
         <option [value]="null">-- Select Ticket Type --</option>
         @for (type of event()?.ticketTypes; track type.id) {
           <option [value]="type.id" [disabled]="type.isDeleted">
@@ -23,7 +22,7 @@
 
     <div>
       <label class="block text-sm font-medium">Quantity</label>
-      <input type="number" class="form-input w-full mt-1" formControlName="quantity" min="1" />
+      <input type="number" class="form_input w-full mt-1" formControlName="quantity" min="1" />
     </div>
     
     @if (selectedTicketType() && eventTypeToString(event()?.eventType?? 1) == 'Seatable') {
@@ -51,7 +50,7 @@
 
     <div>
       <label class="block text-sm font-medium">Payment Method</label>
-        <select class="form-select w-full mt-1" formControlName="paymentType">
+        <select class="form_select w-full mt-1" formControlName="paymentType">
         <option [ngValue]="null">-- Select Payment Type --</option>
         @for (type of paymentTypes; track type[1]) {
             <option [ngValue]="type[1]">{{ type[0] }}</option>

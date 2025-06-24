@@ -19,6 +19,7 @@ import { Profile as UserProfile} from './components/User/profile/profile';
 import { Profile as AdminProfile} from './components/Admin/profile/profile';
 import { Profile as ManagerProfile} from './components/Manager/profile/profile';
 import { Tickets as ManagerTickets} from './components/Manager/tickets/tickets';
+import { Tickets as AdminTickets} from './components/Admin/tickets/tickets';
 import { AddEvent as ManagerAddEvent} from './components/Manager/add-event/add-event';
 import { AddAdmin } from './components/Admin/add-admin/add-admin';
 
@@ -74,6 +75,10 @@ export const routes: Routes = [
       {
         path: 'events/:id',
         component: AdminEventById,
+      },
+      {
+        path: 'events/:id/tickets',
+        component: AdminTickets,
       }
     ]
   },

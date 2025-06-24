@@ -40,6 +40,9 @@ export class EventById implements OnInit {
     this.eventId = this.route.snapshot.paramMap.get('id')!;
     this.loadEvent();
   }
+  isCancelled(event: AppEvent): boolean {
+    return event.eventStatus.toString() == "Cancelled";
+  }
 
   eventStatusToString(status: number): string {
     return EventStatus[status];

@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import {EventStatus, EventTypeEnum, TicketTypeEnum} from '../../../models/enum';
 import { FormsModule } from '@angular/forms';
+import { EventManager } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-events',
@@ -26,6 +27,10 @@ export class Events {
 
   ngOnInit() {
     this.loadEvents();
+  }
+
+  isCancelled(event: AppEvent): boolean {
+    return event.eventStatus.toString() == "Cancelled";
   }
 
   loadEvents() {

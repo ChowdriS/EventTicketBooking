@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { EventService } from '../../../services/Event/event.service';
 import { ApiResponse, PagedResponse } from '../../../models/api-response.model';
 import { AppEvent } from '../../../models/event.model';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import {EventStatus, EventTypeEnum, TicketTypeEnum} from '../../../models/enum';
 import { EventStatusPipe, EventTypePipe, TicketTypePipe } from '../../../misc/pipes';
@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-events',
   standalone: true,
-  imports: [RouterLink, DatePipe, CommonModule,FormsModule],
+  imports: [DatePipe, CommonModule,FormsModule],
   templateUrl: './events.html',
   styleUrl: './events.css'
 })
@@ -23,12 +23,15 @@ export class Events {
   searchElement: string = '';
   filterDate: string = '';
 
-  constructor(private eventsService: EventService) {}
+  constructor(private eventsService: EventService, private router: Router) {}
 
   ngOnInit() {
     this.loadEvents();
   }
-
+  
+  isCancelled(event: AppEvent): boolean {
+    return event.eventStatus.toString() == "Cancelled";
+  }
   loadEvents() {
     if(this.filterDate != ''){
       let dates = new Date(this.filterDate).toISOString();
@@ -46,7 +49,14 @@ export class Events {
         error: () => alert("Failed to load events.")
       });
   }
-
+  GetEventById(event:AppEvent){
+    if(this.isCancelled(event)){
+      alert("The Event is Cancelled! Try different Event!");
+    }
+    else{
+      this.router.navigate([this.router.url,event.id]);
+    }
+  }
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages()) {
       this.pageNumber.set(page);

@@ -1,0 +1,70 @@
+
+<section class="max-w-6xl mx-auto mt-12 px-4 sm:px-6 lg:px-8 py-10">
+  <h2 class="text-2xl font-semibold mb-6 orange_gradient">My Tickets</h2>
+
+  <div *ngIf="tickets.length > 0; else noTickets" class="overflow-x-auto bg-white rounded-xl shadow-lg p-4">
+    <table class="min-w-full divide-y divide-gray-200 text-sm text-left">
+  <thead class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider">
+    <tr>
+      <th class="px-4 py-3 text-left rounded-tl-xl">Event</th>
+      <th class="px-4 py-3 text-left">Type</th>
+      <th class="px-4 py-3 text-center">Qty</th>
+      <th class="px-4 py-3 text-right">Total Price</th>
+      <th class="px-4 py-3 text-center">Booked At</th>
+      <th class="px-4 py-3 text-center">Status</th>
+    </tr>
+  </thead>
+  <tbody class="divide-y divide-gray-100">
+    <tr
+      *ngFor="let ticket of tickets"
+      [ngClass]="{
+        'bg-red-50 text-gray-400': ticket.payment.status === 3,
+        'hover:bg-gray-50 transition': ticket.payment.status !== 3
+      }"
+    >
+      <td class="px-4 py-4 font-medium text-gray-800">{{ ticket.eventTitle }}</td>
+      <td class="px-4 py-4 text-gray-700">{{ ticket.ticketType }}</td>
+      <td class="px-4 py-4 text-center">{{ ticket.quantity }}</td>
+      <td class="px-4 py-4 text-right font-semibold">₹{{ ticket.totalPrice }}</td>
+      <td class="px-4 py-4 text-center text-gray-600">
+        {{ ticket.bookedAt | date: 'medium' }}
+      </td>
+      <td class="px-4 py-4 text-center font-semibold">
+        <span *ngIf="ticket.payment.status === 3" class="text-red-500">Cancelled</span>
+        <span *ngIf="ticket.payment.status !== 3" class="text-green-600">Booked</span>
+      </td>
+
+    </tr>
+  </tbody>
+</table>
+
+
+    <div class="flex justify-between items-center mt-6">
+      <button
+        class="outline_btn"
+        (click)="changePage(currentPage - 1)"
+        [disabled]="currentPage === 1"
+      >
+        Prev
+      </button>
+
+      <span class="text-gray-700 font-medium">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+
+      <button
+        class="black_btn"
+        (click)="changePage(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+
+  <ng-template #noTickets>
+    <p class="text-gray-500 text-center mt-6 italic">
+      No booked tickets right now.
+    </p>
+  </ng-template>
+</section>

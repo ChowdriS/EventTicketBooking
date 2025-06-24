@@ -3,9 +3,10 @@
 </section>
 
 
-<section class="max-w-6xl mx-auto px-4">
-    <div class=" flex-between font-bold items-center my-2">
+<section class="max-w-6xl mx-auto px-4 mt-2">
+    <div class=" flex-between">
         <h2 class="orange_gradient text-2xl font-semibold mb-4 mt-4">Upcoming Event</h2>
+        <button class="outline_btn" [routerLink]="[this.router.url, 'events']">View All Events</button>
     </div>
     @if (topEvent(); as event) {
     <div class="bg-white rounded-xl drop-shadow-lg p-6 mb-6">
@@ -36,12 +37,13 @@
     @else {
     <p class="text-gray-400">No upcoming events found.</p>
     }
-    <div class="text-right">
-        <a class="text-blue-600 underline text-sm" [routerLink]="[this.router.url, 'events']">View All Events →</a>
-    </div>
 </section>
-<section class="p-6">
-    <h2 class="text-2xl font-semibold orange_gradient mb-4 text-center">All Users</h2>
+<section class="p-6 mt-4">
+    <div class=" mb-4 flex justify-around items-center">
+        <h2 class="text-2xl font-semibold orange_gradient mr-16">All Users</h2>
+        <button [routerLink]="['./add-admin']" class=" black_btn" >Add Admin</button>
+    </div>
+
 
     <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200 text-sm text-left">
