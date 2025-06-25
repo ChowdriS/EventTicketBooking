@@ -140,6 +140,11 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.red_gradient {
+  background: linear-gradient(to right, #af5b5b, #ff0000);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 .desc {
   margin-top: 1.25rem;
@@ -384,3 +389,6 @@
 .custom-shadow{
   box-shadow: 0 5px 6px 0 rgba(0,0,0,0.2);
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

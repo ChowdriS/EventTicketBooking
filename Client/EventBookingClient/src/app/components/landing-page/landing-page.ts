@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/Auth/auth';
 import { Getrole } from '../../misc/Token';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-landing-page',
-  imports: [RouterLink],
+  imports: [RouterLink,NgOptimizedImage],
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.css',
   standalone: true

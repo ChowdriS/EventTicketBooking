@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiResponse } from '../../../models/api-response.model';
 import { Getrole } from '../../../misc/Token';
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-login',
@@ -37,16 +38,16 @@ export class Login implements OnInit {
     }
   }
 
-  constructor(private fb: FormBuilder,private authService: Auth, private router: Router) {}
+  constructor(private fb: FormBuilder,private authService: Auth, private router: Router,private notify:NotificationService) {}
 
   onLogin() {
     this.authService.login(this.loginForm.value)
       .subscribe({
         next: (res: ApiResponse) => {
           if (res.success && res.data?.token) {
-            alert('Login Successful!');
             this.authService.setToken(res.data.token);
             this.roleBasedRoute();
+            this.notify.success("Login Success");
           } else {
             alert(res.message || 'Login failed.');
           }

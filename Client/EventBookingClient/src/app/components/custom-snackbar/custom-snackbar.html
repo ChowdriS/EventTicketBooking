@@ -1,0 +1,19 @@
+<div
+  class="mt-0 flex items-start justify-between gap-4 rounded-xl px-5 py-4 shadow-md text-white min-w-[300px] max-w-sm"
+  [ngClass]="{
+    'bg-orange-400': data.type === 'info',
+    'bg-emerald-500': data.type === 'success',
+    'bg-red-500': data.type === 'error'
+  }"
+>
+  <span class="flex-1 text-sm font-medium leading-snug">
+    {{ data.message }}
+  </span>
+  <button
+    (click)="close()"
+    class="text-white hover:text-white/80 text-xl font-bold leading-none focus:outline-none"
+    aria-label="Close notification"
+  >
+    ✖
+  </button>
+</div>
