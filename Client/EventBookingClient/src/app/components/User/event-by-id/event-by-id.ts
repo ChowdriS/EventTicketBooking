@@ -24,9 +24,13 @@ export class EventById implements OnInit {
   selectedTicketType = signal<EventResponseTicketType | undefined>(undefined);
   availableSeats = signal<number[]>([]);
   bookedSeatNumbers = signal<number[]>([]);
-
+  EventTypeEnum = EventTypeEnum;
+  imageid = signal<any[] | null>(null);
   PaymentTypeEnum = PaymentTypeEnum;
   paymentTypes = Object.entries(PaymentTypeEnum).filter(([k, v]) => !isNaN(Number(v)));
+
+  currentImageIndex = 0;
+  imageIntervalId: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -39,6 +43,50 @@ export class EventById implements OnInit {
   ngOnInit(): void {
     this.eventId = this.route.snapshot.paramMap.get('id')!;
     this.loadEvent();
+  }
+
+  ngOnDestroy(): void {
+    if (this.imageIntervalId) clearInterval(this.imageIntervalId);
+  }
+
+  loadEvent() {
+    this.eventService.getEventById(this.eventId).subscribe((res: ApiResponse) => {
+      const evt = new AppEvent(res.data);
+      this.event.set(evt);
+      this.imageid.set(evt.images ?? null);
+
+      if ((this.imageid()?.length ?? 0) > 1) {
+        this.startImageSlider();
+      }
+
+      this.bookedSeatNumbers.set(
+        evt.bookedSeats.filter((s) => s.bookedSeatStatus === 0).map((s) => s.seatNumber)
+      );
+
+      this.form = this.fb.group({
+        ticketTypeId: [null, Validators.required],
+        quantity: [1, [Validators.required, Validators.min(1)]],
+        paymentType: [null, Validators.required],
+        seatNumbers: [[]]
+      });
+
+      this.form.get('ticketTypeId')?.valueChanges.subscribe(id => {
+        const ticketType = evt.ticketTypes.find(t => t.id === id);
+        this.selectedTicketType.set(ticketType);
+        this.form.get('seatNumbers')?.setValue([]);
+        this.form.get('quantity')?.setValue(1);
+      });
+      this.form.get('ticketTypeId')?.setValue(null);
+    });
+  }
+
+  startImageSlider() {
+    this.imageIntervalId = setInterval(() => {
+      const images = this.imageid();
+      if (images && images.length > 1) {
+        this.currentImageIndex = (this.currentImageIndex + 1) % images.length;
+      }
+    }, 3000); // change image every 3 seconds
   }
   isCancelled(event: AppEvent): boolean {
     return event.eventStatus.toString() == "Cancelled";
@@ -55,37 +103,6 @@ export class EventById implements OnInit {
   ticketTypeToString(type: number): string {
     return TicketTypeEnum[type];
   }
-
-  loadEvent() {
-    this.eventService.getEventById(this.eventId).subscribe((res: ApiResponse) => {
-      const evt = new AppEvent(res.data);
-      this.event.set(evt);
-      this.bookedSeatNumbers.set(
-        evt.bookedSeats.filter((s) => s.bookedSeatStatus === 0).map((s) => s.seatNumber)
-      );
-
-      this.form = this.fb.group({
-        ticketTypeId: [null, Validators.required],
-        quantity: [1, [Validators.required, Validators.min(1)]],
-        paymentType: [null, Validators.required],
-        seatNumbers: [[]]
-      });
-
-      // Initialize selected ticket type based on form changes
-      this.form.get('ticketTypeId')?.valueChanges.subscribe(id => {
-        const ticketType = evt.ticketTypes.find(t => t.id === id);
-        this.selectedTicketType.set(ticketType);
-        this.form.get('seatNumbers')?.setValue([]);
-        this.form.get('quantity')?.setValue(1);
-      });
-
-      // Set initial value for ticketTypeId to trigger first selection
-      if (evt.ticketTypes.length > 0) {
-        this.form.get('ticketTypeId')?.setValue(evt.ticketTypes[0].id);
-      }
-    });
-  }
-
   toggleSeat(seat: number) {
     const currentSeats = this.form.value.seatNumbers as number[];
     const index = currentSeats.indexOf(seat);
@@ -117,7 +134,7 @@ export class EventById implements OnInit {
   const evt = this.event();
   if (!evt) return;
 
-  const isSeatable = EventTypeEnum[evt.eventType] === 'Seatable';
+  const isSeatable = this.event()?.eventType.toString()==this.eventTypeToString(0)
 
   const payload = {
     EventId: evt.id,
@@ -129,7 +146,6 @@ export class EventById implements OnInit {
       TransactionId: uuidv4(),
     }
   };
-
   // console.log(payload)
   this.ticketService.bookTicket(payload).subscribe({
     next: () => this.router.navigate(['/user']),

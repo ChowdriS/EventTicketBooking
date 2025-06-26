@@ -1,15 +1,40 @@
-<section class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow mt-8">
-  <h2 class="text-3xl font-semibold orange_gradient mb-2">{{ event()?.title }}</h2>
-  <p class="text-gray-600 mb-4">{{ event()?.description }}</p>
+<section class="max-w-5xl mx-auto p-6 space-y-8 bg-white shadow-2xl rounded-2xl mt-10">
+  <div class=" flex-between ">
+    <div class=" flex flex-col justify-center items-center h-64 w-128 gap-2">
+      <h2 class="text-4xl font-bold orange_gradient">{{ event()?.title }}</h2>
+      <p class="text-gray-600">{{ event()?.description }}</p>
+      <div class=" flex gap-2">
+        <strong>Date:</strong> <p>{{ event()?.eventDate | date: 'medium' }}</p>
+      </div>
+      <div class=" flex gap-2">
+        <strong>Status:</strong> <p>{{ event()?.eventStatus }}</p>
+      </div>
+      <div class=" flex gap-2">
+        <strong>Type:</strong> <p>{{ event()?.eventType }}</p>
+      </div>
+    </div>
+    <div class="h-64 w-128 bg-gray-100 flex justify-center items-center overflow-hidden relative rounded-lg">
+      @if (imageid()?.length === 1) {
+        <img
+          [src]="`http://localhost:5279/api/v1/eventimage/download/${(imageid() ?? [])[0]}`"
+          alt="event image"
+          class="w-full h-full object-cover rounded-lg"
+        />
+      }
+      @else if (((imageid() ?? []).length ?? 0) > 1) {
+        <img
+          [src]="`http://localhost:5279/api/v1/eventimage/download/${(imageid() ?? [])[currentImageIndex]}`"
+          alt="event image"
+          class="w-full h-full object-cover rounded-lg transition duration-500 ease-in-out"
+        />
+      }
+    </div>
 
-  <div class="text-gray-500 mb-6">
-    <p><strong>Date:</strong> {{ event()?.eventDate | date: 'medium' }}</p>
-    <p><strong>Status:</strong> {{ event()?.eventStatus }}</p>
-    <p><strong>Type:</strong> {{ event()?.eventType }}</p>
   </div>
-  <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
-    <div>
-      <label class="block text-sm font-medium">Ticket Type</label>
+
+  <form *ngIf="form" [formGroup]="form" (ngSubmit)="submit()" class="grid md:grid-cols-2 gap-6">
+    <div class="md:col-span-2">
+      <label class="block text-sm font-medium text-gray-700">Ticket Type</label>
       <select class="form_select w-full mt-1" formControlName="ticketTypeId">
         <option [value]="null">-- Select Ticket Type --</option>
         @for (type of event()?.ticketTypes; track type.id) {
@@ -21,45 +46,72 @@
     </div>
 
     <div>
-      <label class="block text-sm font-medium">Quantity</label>
-      <input type="number" class="form_input w-full mt-1" formControlName="quantity" min="1" />
+      <label class="block text-sm font-medium text-gray-700">Quantity</label>
+      <input
+        type="number"
+        class="form_input w-full mt-1"
+        formControlName="quantity"
+        min="1"
+      />
     </div>
-    
-    @if (selectedTicketType() && eventTypeToString(event()?.eventType?? 1) == 'Seatable') {
-      <div>
-        <label class="block text-sm font-medium mb-1">Select Seats</label>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Payment Method</label>
+      <select class="form_select w-full mt-1" formControlName="paymentType">
+        <option [ngValue]="null">-- Select Payment Type --</option>
+        @for (type of paymentTypes; track type[1]) {
+          <option [ngValue]="type[1]">{{ type[0] }}</option>
+        }
+      </select>
+    </div>
+
+    @if (selectedTicketType() && event()!.eventType.toString() == eventTypeToString(0)) {
+      <div class="md:col-span-2 space-y-2">
+        <div class=" flex-between mb-4">
+          <label class="block text-sm font-medium text-gray-700">Select Seats</label>
+          <div class="flex items-center gap-2 text-sm text-black mb-2">
+            <div class="flex items-center gap-1">
+              <div class="w-4 h-4 rounded bg-orange-400 border border-gray-300"></div>
+              <span>Booked</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <div class="w-4 h-4 rounded bg-green-500 border border-gray-300"></div>
+              <span>Selected</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <div class="w-4 h-4 rounded bg-white border border-gray-500"></div>
+              <span>Available</span>
+            </div>
+          </div>
+
+        </div>
         <div class="grid grid-cols-10 gap-2">
           @for (seat of generateSeats(selectedTicketType()?.totalQuantity ?? 0); track seat) {
             <button
               type="button"
               [disabled]="isSeatBooked(seat)"
-              [ngClass]="{
-                'bg-gray-400': isSeatBooked(seat),
-                'bg-green-500 text-white': isSeatSelected(seat),
-                'bg-white': !isSeatSelected(seat)
-              }"
-              class="border rounded p-1 text-xs"
+              [ngClass]="
+                isSeatBooked(seat)
+                  ? 'bg-orange-400 cursor-not-allowed'
+                  : isSeatSelected(seat)
+                    ? 'bg-green-500 text-white'
+                    : 'bg-white'
+              "
+              class="border rounded p-1 text-xs transition duration-200"
               (click)="toggleSeat(seat)">
               {{ seat }}
             </button>
+
           }
         </div>
-        <p class="text-sm text-gray-500 mt-2">Only {{ form.value.quantity }} seats can be selected.</p>
+        
       </div>
     }
 
-    <div>
-      <label class="block text-sm font-medium">Payment Method</label>
-        <select class="form_select w-full mt-1" formControlName="paymentType">
-        <option [ngValue]="null">-- Select Payment Type --</option>
-        @for (type of paymentTypes; track type[1]) {
-            <option [ngValue]="type[1]">{{ type[0] }}</option>
-    }
-    </select>
-
+    <div class="md:col-span-2">
+      <button type="submit" class="black_btn w-full mt-4" [disabled]="form.invalid">
+        Book Now
+      </button>
     </div>
-
-    <button type="submit" class="black_btn w-full mt-4" [disabled]="form.invalid">Book Now</button>
   </form>
 </section>
-

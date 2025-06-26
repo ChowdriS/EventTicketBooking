@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { UserService } from '../../../services/User/user-service';
 import { User } from '../../../models/user.model';
 import { ApiResponse } from '../../../models/api-response.model';
+import { SignalRService } from '../../../services/Notification/signalr-service';
 
 @Component({
   selector: 'app-home',
@@ -12,11 +13,12 @@ import { ApiResponse } from '../../../models/api-response.model';
 })
 export class Home {
   user = signal<User | null>(null);
-  constructor(public router : Router,private userService:UserService) {}
+  constructor(public router : Router,private userService:UserService,private signalrService : SignalRService) {}
 
   logout() {
     localStorage.removeItem('token');
     this.router.navigate(['/login']);
+    this.signalrService.stopConnection();
   }
   ngOnInit(): void {
     this.getMyDetail();

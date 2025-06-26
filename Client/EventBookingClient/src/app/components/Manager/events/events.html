@@ -1,34 +1,57 @@
-<section class="p-6 mt-8">
+<section class="p-6">
     <div class=" flex-between font-bold items-center my-2">
         <h2 class="text-2xl font-semibold mb-4 orange_gradient">All Events</h2>
         <button class=" outline_btn" [routerLink]="[this.router.url,'add']">Add Event</button>        
     </div>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-12">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
     @for (event of events(); track event.id) {
-    <div class="bg-white rounded-xl drop-shadow-lg p-6 mb-6">
-        <h3 class="text-xl font-bold orange_gradient">{{ event.title }}</h3>
-        <p class="text-gray-600 mt-2">{{ event.description }}</p>
-        <p class="text-sm mt-1 text-gray-400">
+      <div class=" prompt-card bg-white rounded-xl drop-shadow-lg p-6 mb-2">
+        <div class=" flex-between">
+        <div class=" w-128 h-64 flex flex-col gap-2 justify-around items-start">
+          <div class=" flex-start gap-4">
+            <h3 class="text-xl font-bold orange_gradient">{{ event.title }}</h3>
+            @if(isCancelled(event)){
+              <h3 class="text-xl text-red-500">( Cancelled )</h3>
+            }
+          </div>
+          <p class="text-gray-600 mt-2">{{ event.description }}</p>
+          
+          <p class="text-sm mt-1 text-gray-400">
             📅 Date: {{ event.eventDate | date: 'medium' }}
-        </p>
-        <p class="text-sm mt-1 text-gray-400">
+          </p>
+          <p class="text-sm mt-1 text-gray-400">
             📌 Status: {{ event.eventStatus }} | Type: {{ event.eventType }}
-        </p>
-        <div class="mt-4">
+          </p>
+          
+          <div class="mt-4">
             <h4 class="font-semibold mb-2 text-orange-600">Ticket Types:</h4>
             <ul class="text-sm space-y-1">
-                @for (ticket of event.ticketTypes; track ticket.id) {
+              @for (ticket of event.ticketTypes; track ticket.id) {
                 <li class="text-gray-700">
-                    <span class="font-medium">{{ ticketTypeToString(ticket.typeName) }} </span> -
-                    ₹{{ ticket.price }}&nbsp; | &nbsp;
-                    Total: {{ticket.totalQuantity}} &nbsp;|&nbsp;
-                    Booked: {{ticket.bookedQuantity }}
+                  <span class="font-medium">{{ ticketTypeToString(ticket.typeName) }} </span> | 
+                  ₹{{ ticket.price }} |
+                  Available: {{ ticket.totalQuantity - ticket.bookedQuantity }}
                 </li>
-                }
+              }
             </ul>
+          </div>
         </div>
-        <button class="mt-4 black_btn w-full" [routerLink]="[this.router.url,event.id]">View Details</button>
-    </div>
+        <div class=" w-128 h-64">
+          @if(event.images.length){
+            <img
+            [src]="`http://localhost:5279/api/v1/eventimage/download/${((event.images) ?? [])[0]}`"
+            alt="event image"
+            class="w-full h-full object-cover rounded-lg"
+            />
+          }
+          @else {
+            <div class=" bg-gray-500 w-full h-full">
+            </div>
+          } 
+        </div>
+        </div>
+        <button class="mt-4 black_btn w-full" (click)="GetEventById(event)">View Details</button>
+      </div>
     }
   </div>
 

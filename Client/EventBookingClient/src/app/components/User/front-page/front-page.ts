@@ -14,12 +14,60 @@ import { EventStatus, EventTypeEnum, TicketTypeEnum } from '../../../models/enum
 })
 export class FrontPage {
   topEvent = signal<AppEvent | null>(null);
+  images = signal<any | null>(null);
+  currentIndex = signal<number>(0);
+  intervalId: any;
   constructor(private eventsService: EventService,public router : Router) {}
   
   ngOnInit() {
     this.fetchTopEvent();
+    this.GetAllEventImages();
+    this.startSlider();
   }
-  
+  getCurrentIndex(){
+    return this.currentIndex();
+  }
+  isCancelled(event: AppEvent): boolean {
+    return event.eventStatus.toString() === 'Cancelled';
+  }
+  ngOnDestroy() {
+    clearInterval(this.intervalId);
+  }
+  GetEventById(event: AppEvent) {
+    if (this.isCancelled(event)) {
+      alert('The Event is Cancelled! Try a different Event!');
+    } else {
+      this.router.navigate([this.router.url,'events', event.id]);
+    }
+  }
+  routeToEvent(img:any){
+    let eventId = img.eventId;
+    this.router.navigate([this.router.url,'events', eventId]);
+  }
+  GetAllEventImages() {
+    this.eventsService.getAllEventImages().subscribe({
+      next:(res:any)=>{
+        this.images.set(res.$values);
+        console.log(this.images());
+      },
+      error:(err:any)=>{
+
+      }
+    })
+  }
+  startSlider() {
+    this.intervalId = setInterval(() => {
+      const count = this.images()?.length || 0;
+      if (count > 0) {
+        const next = ((this.currentIndex()) + 1) % count;
+        this.currentIndex.set(next);
+      }
+    }, 3500); 
+  }
+
+  goToSlide(index: number) {
+    this.currentIndex.set(index);
+  }
   fetchTopEvent() {
     this.eventsService.getEvents(1, 1).subscribe({
       next: (res: ApiResponse<PagedResponse<any>>) => {

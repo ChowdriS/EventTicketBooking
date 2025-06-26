@@ -4,12 +4,12 @@
   <div class="p-4 border rounded-xl bg-gray-50 space-y-4">
     <div>
       <label class="block text-sm font-medium text-gray-700">Email</label>
-      <p class="text-gray-800">{{ user!.email }}</p>
+      <p class="text-gray-800">{{ user.email }}</p>
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Role</label>
-      <p class="text-gray-800 capitalize">{{ user!.role}}</p>
+      <p class="text-gray-800 capitalize">{{ user.role}}</p>
     </div>
 
     <form [formGroup]="usernameForm">

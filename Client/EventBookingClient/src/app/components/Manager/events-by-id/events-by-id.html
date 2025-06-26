@@ -1,7 +1,7 @@
 <section class="max-w-5xl mx-auto p-6 space-y-8 bg-white shadow-xl rounded-2xl mt-10">
   <div class="flex justify-between items-center">
     <h2 class="text-2xl font-bold orange_gradient">Event Details</h2>
-    <div class=" flex justify-center items-center gap-2">
+    <div class=" flex-center gap-2">
         @if(isEditingEvent()){
           <button class="black_btn" (click)="saveEvent()">
               Save Event
@@ -11,6 +11,18 @@
           </button>
         }
         @else {
+          @if(!isImageAdd()){
+            <button class=" black_btn" (click)="toggleEventImageAdd()">Add the Images</button>
+          }
+          @else {
+            <button class=" black_btn" (click)="toggleEventImageAdd()">Cancel Image Add</button>
+          }
+          @if(!isImageEdit()){
+            <button class=" outline_btn" (click)="toggleEventImage()">Edit the Images</button>
+          }
+          @else {
+            <button class=" outline_btn" (click)="toggleEventImage()">Cancel Image Edit</button>
+          }
           <button class="black_btn" (click)="toggleEditEvent()">
             Edit Event
           </button>
@@ -20,6 +32,65 @@
         }
     </div>
   </div>
+    @if(isImageAdd()){
+      <div class="flex justify-center items-center gap-8 p-4 h-16 w-full">
+          <input
+            type="file"
+            #fileInput
+            accept="image/*"
+            class="hidden"
+            (change)="handleFileChange($event)"
+          />
+          <button
+          type="button"
+          class="outline_btn"
+          (click)="fileInput.click()"
+          >Click here to Choose Image</button>
+          <div *ngIf="selectedFile" class=" flex-center gap-2">
+            <p class="text-sm text-gray-600">Selected: {{ selectedFile.name }}</p>
+            <button class="outline_btn mt-2" (click)="submitImage()">Add</button>
+          </div>
+      </div>
+    }
+    @else if(!isImageEdit()){
+    <div class=" w-full h-full">
+      @if (images()?.length === 1) {
+        <img
+        [src]="`http://localhost:5279/api/v1/eventimage/download/${(images() ?? [])[0]}`"
+        alt="event image"
+        class="w-full h-full object-cover rounded-lg"
+        />
+      }
+      @else if (images()?.length === 0) {
+        <div class=" w-full h-[100px] bg-gray-500 flex-center">No Images added</div>
+      }
+      @else if (((images() ?? []).length ?? 0) > 1) {
+            <img
+              [src]="`http://localhost:5279/api/v1/eventimage/download/${(images() ?? [])[currentImageIndex]}`"
+              alt="event image"
+              class="w-full h-full object-cover rounded-lg transition duration-500 ease-in-out"
+            />
+          }
+        </div>
+    }
+    @else {
+      <div class="flex flex-wrap justify-center items-center gap-16 p-4">
+        @for(item of images();track $index){
+          <div class=" w-64 h-32 flex justify-center items-center gap-8">
+            <div class=" w-full h-full bg-amber-700">
+              <img
+              [src]="`http://localhost:5279/api/v1/eventimage/download/${(images() ?? [])[$index]}`"
+              alt="event image"
+              class="w-64 h-32 object-cover rounded-lg"
+              />
+            </div>
+            <div>
+              <button class="outline_btn" (click)="deleteImage(item)">Delete</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
 
   @if (eventForm) {
     <form [formGroup]="eventForm" class="grid md:grid-cols-2 gap-6">

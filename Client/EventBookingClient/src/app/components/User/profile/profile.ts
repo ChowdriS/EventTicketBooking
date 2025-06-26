@@ -80,7 +80,7 @@ export class Profile implements OnInit {
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
         }, 100);
-        alert('Download started successfully!');
+        // alert('Download started successfully!');
       },
       error: (error) => {
         alert(`Error: ${error.message}`);

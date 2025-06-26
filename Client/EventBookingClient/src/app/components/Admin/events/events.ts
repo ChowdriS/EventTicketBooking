@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { EventService } from '../../../services/Event/event.service';
 import { ApiResponse, PagedResponse } from '../../../models/api-response.model';
 import { AppEvent } from '../../../models/event.model';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import {EventStatus, EventTypeEnum, TicketTypeEnum} from '../../../models/enum';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { EventManager } from '@angular/platform-browser';
 @Component({
   selector: 'app-events',
   standalone: true,
-  imports: [RouterLink, DatePipe, CommonModule,FormsModule],
+  imports: [ DatePipe, CommonModule,FormsModule],
   templateUrl: './events.html',
   styleUrl: './events.css'
 })
@@ -23,7 +23,7 @@ export class Events {
   searchElement: string = '';
   filterDate: string = '';
 
-  constructor(private eventsService: EventService) {}
+  constructor(private eventsService: EventService, private router: Router) {}
 
   ngOnInit() {
     this.loadEvents();
@@ -50,7 +50,13 @@ export class Events {
         error: () => alert("Failed to load events.")
       });
   }
-
+  GetEventById(event: AppEvent) {
+    if (this.isCancelled(event)) {
+      alert('The Event is Cancelled! Try a different Event!');
+    } else {
+      this.router.navigate([this.router.url, event.id]);
+    }
+  }
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages()) {
       this.pageNumber.set(page);

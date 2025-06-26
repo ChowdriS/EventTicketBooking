@@ -1,23 +1,55 @@
-<section
-    class="w-full h-[300px] bg-gray-200 rounded-xl shadow-inner flex items-center justify-center text-gray-500">
-    <p class="text-lg font-medium">[ Upcoming Events Slider Coming Soon ]</p>
+<section class="max-w-6xl mx-auto px-4 mt-4">
+  @if (images()?.length > 0) {
+    <div class="relative w-full h-[440px] overflow-hidden rounded-xl shadow-md">
+      <div
+        class="flex transition-transform duration-700 ease-in-out"
+        [style.transform]="'translateX(-' + (getCurrentIndex() * 100) + '%)'"
+      >
+        @for (img of images(); track img.id) {
+          <div class="min-w-full h-full">
+            <img
+              [src]="'http://localhost:5279/api/v1/eventimage/download/' + img.id"
+              class="w-full h-full object-cover rounded-xl"
+              alt="event image" (click)="routeToEvent(img)"
+            />
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="w-full h-[360px] flex items-center justify-center text-gray-400 bg-gray-200 rounded-xl shadow-inner">
+      <p class="text-lg font-medium">[ Upcoming Events Slider Coming Soon ]</p>
+    </div>
+  }
 </section>
 <section class="mt-12 max-w-6xl mx-auto px-4">
     <div class=" flex-between font-bold items-center my-2">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Upcoming Event</h2>
-        <button class=" outline_btn" [routerLink]="[this.router.url,'events','add']">Add Event</button>        
+        <div class=" flex-center gap-2">
+            <button class=" black_btn" [routerLink]="[this.router.url, 'events']">View All Events</button>
+            <button class=" outline_btn" [routerLink]="[this.router.url,'events','add']">Add Event</button>        
+        </div>
     </div>
     @if (topEvent(); as event) {
-    <div class="bg-white rounded-xl drop-shadow-lg p-6 mb-6">
-        <h3 class="text-xl font-bold orange_gradient">{{ event.title }}</h3>
-        <p class="text-gray-600 mt-2">{{ event.description }}</p>
-        <p class="text-sm mt-1 text-gray-400">
+              <div class=" prompt-card bg-white rounded-xl drop-shadow-lg p-6 mb-6">
+        <div class=" flex-between">
+        <div class=" w-128 h-64 flex flex-col gap-2 justify-evenly items-start">
+          <div class=" flex-start gap-4">
+            <h3 class="text-4xl font-bold orange_gradient">{{ event.title }}</h3>
+            @if(isCancelled(event)){
+              <h3 class="text-xl text-red-500">( Cancelled )</h3>
+            }
+          </div>
+          <p class="text-gray-600 mt-2">{{ event.description }}</p>
+          
+          <p class="text-sm mt-1 text-gray-400">
             📅 Date: {{ event.eventDate | date: 'medium' }}
-        </p>
-        <p class="text-sm mt-1 text-gray-400">
+          </p>
+          <p class="text-sm mt-1 text-gray-400">
             📌 Status: {{ event.eventStatus }} | Type: {{ event.eventType }}
-        </p>
-        <div class="mt-4">
+          </p>
+          
+          <div class="mt-4">
             <h4 class="font-semibold mb-2 text-orange-600">Ticket Types:</h4>
             <ul class="text-sm space-y-1">
                 @for (ticket of event.ticketTypes; track ticket.id) {
@@ -29,14 +61,26 @@
                 </li>
                 }
             </ul>
+          </div>
+        </div>
+        <div class=" w-128 h-64">
+          @if(event.images.length){
+            <img
+            [src]="`http://localhost:5279/api/v1/eventimage/download/${((event.images) ?? [])[0]}`"
+            alt="event image"
+            class="w-full h-full object-cover rounded-lg"
+            />
+          }
+          @else {
+            <div class=" bg-gray-500 w-full h-full">
+            </div>
+          } 
+        </div>
         </div>
         <button class="mt-4 black_btn w-full" [routerLink]="[this.router.url,'events',event.id]">View Details</button>
-    </div>
+      </div>
     }
     @else {
     <p class="text-gray-400">No upcoming events found.</p>
     }
-    <div class="text-right">
-        <a class="text-blue-600 underline text-sm" [routerLink]="[this.router.url, 'events']">View All Events →</a>
-    </div>
 </section>

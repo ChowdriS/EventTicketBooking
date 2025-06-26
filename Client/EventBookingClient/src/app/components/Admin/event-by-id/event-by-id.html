@@ -17,7 +17,25 @@
         </button>
     </div>
   </div>
-
+    <div class=" w-full h-full">
+      @if (images()?.length === 1) {
+        <img
+        [src]="`http://localhost:5279/api/v1/eventimage/download/${(images() ?? [])[0]}`"
+        alt="event image"
+        class="w-full h-full object-cover rounded-lg"
+        />
+      }
+      @else if (images()?.length === 0) {
+        <div class=" w-full h-[100px] bg-gray-500 flex-center">No Images added</div>
+      }
+      @else if (((images() ?? []).length ?? 0) > 1) {
+            <img
+              [src]="`http://localhost:5279/api/v1/eventimage/download/${(images() ?? [])[currentImageIndex]}`"
+              alt="event image"
+              class="w-full h-full object-cover rounded-lg transition duration-500 ease-in-out"
+            />
+          }
+        </div>
   @if (eventForm) {
     <form [formGroup]="eventForm" *ngIf="eventForm" class="grid md:grid-cols-2 gap-6">
       <div>

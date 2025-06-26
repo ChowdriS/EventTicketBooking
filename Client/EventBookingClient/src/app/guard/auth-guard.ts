@@ -2,16 +2,17 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { Auth } from '../services/Auth/auth';
 import { Getrole } from '../misc/Token';
+import { SignalRService } from '../services/Notification/signalr-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  constructor(private authService: Auth, private router: Router) {}
+  constructor(private authService: Auth, private router: Router, private signalrService : SignalRService) {}
 
   canActivate(): boolean {
     const token = this.authService.getToken();
-
+    this.signalrService.startConnection();
     if (token) {
       return true;
     }

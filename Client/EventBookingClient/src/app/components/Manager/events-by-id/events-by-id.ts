@@ -17,13 +17,17 @@ export class EventsById implements OnInit {
   eventId!: string;
   eventForm!: FormGroup;
   ticketTypeForm!: FormGroup;
-
+  currentImageIndex = 0;
   isEditingEvent = signal(false);
   isAddingTicketType = signal(false);
   ticketTypes = signal<any[]>([]);
+  images = signal<any[]|null>([]);
   loading = signal(true);
+  isImageEdit = signal(false);
+  isImageAdd = signal(false);
   previousEventData = signal<AppEvent | null>(null);
-
+  imageIntervalId: any;
+  selectedFile: File | null = null;
   constructor(
     private fb: FormBuilder,
     private eventService: EventService,
@@ -36,8 +40,17 @@ export class EventsById implements OnInit {
     this.eventId = this.route.snapshot.paramMap.get('id')!;
     this.initForms();
     this.loadEventData();
+    this.startImageSlider();
   }
-
+  toggleEventImage(){
+    this.isImageEdit.set(!this.isImageEdit());
+    this.isImageAdd.set(false);
+  }
+  toggleEventImageAdd(){
+    this.isImageAdd.set(!this.isImageAdd());
+    this.selectedFile = null;
+    this.isImageEdit.set(false);
+  }
   initForms(): void {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
@@ -55,16 +68,28 @@ export class EventsById implements OnInit {
       description: [''],
     });
   }
+  deleteImage(image:any){
+    // debugger;
+    this.eventService.deleteEventImages(image).subscribe({
+      next:()=>{
+        alert("Image deleted!");
+        this.loadEventData();
+        this.isImageEdit.set(!this.isImageEdit());
+      },
+      error:(err:any)=>{
 
+      }
+    })
+  }
   loadEventData() {
     this.loading.set(true);
     this.eventService.getEventById(this.eventId).subscribe({
       next: (res: any) => {
         this.eventForm.patchValue(res?.data);
         this.previousEventData.set(res.data);
-        // console.log(this.previousEventData());
+        this.images.set(res.data?.images.$values);
         this.ticketTypes.set(res.data?.ticketTypes.$values || []);
-        // console.log(this.ticketTypes());
+        // console.log(this.images());
         this.loading.set(false);
       },
       error: () => {
@@ -73,7 +98,23 @@ export class EventsById implements OnInit {
       }
     });
   }
-
+  handleFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+    }
+  }
+  startImageSlider() {
+    this.imageIntervalId = setInterval(() => {
+      const images = this.images();
+      if (images && images.length > 1) {
+        this.currentImageIndex = (this.currentImageIndex + 1) % images.length;
+      }
+    }, 1500); 
+  }
+  isCancelled(event: AppEvent): boolean {
+    return event.eventStatus.toString() == "Cancelled";
+  }
   toggleEditEvent() {
     this.isEditingEvent.set(!this.isEditingEvent());
   }
@@ -88,16 +129,6 @@ export class EventsById implements OnInit {
     payload.eventDate = formValue.eventDate !== this.previousEventData()?.eventDate ? formValue.eventDate : null;
     payload.eventType = formValue.eventType !== this.previousEventData()?.eventType ? EventTypeEnum[formValue.eventType as keyof typeof EventTypeEnum] : null;
     payload.eventStatus = formValue.eventStatus !== this.previousEventData()?.eventStatus ? EventStatus[formValue.eventStatus as keyof typeof EventStatus] : null;
-    // let flag = false;
-    // for (let t of payload) {
-    //   if (t != null) {
-    //     flag = true;
-    //     break;
-    //   }
-    // }
-    // if (flag == false) {
-    //   alert('Nothing is Changed!');
-    // } else {
       this.eventService.updateEvent(this.eventId, payload).subscribe({
         next: () => {
           alert('Event updated successfully');
@@ -108,23 +139,33 @@ export class EventsById implements OnInit {
           alert('Failed to update event');
         }
       });
-    // }
   }
-  // eventStatusToString(status: number): string {
-  //   return EventStatus[status];
-  // }
-
-  // eventTypeToString(type: number): string {
-  //   return EventTypeEnum[type];
-  // }
-
-  // ticketTypeToString(type: number): string {
-  //   return TicketTypeEnum[type];
-  // }
 
   startAddTicketType() {
     this.isAddingTicketType.set(true);
     this.ticketTypeForm.reset();
+  }
+
+  submitImage() {
+    if (!this.selectedFile || !this.eventId) {
+      alert('Please select a file');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', this.selectedFile);
+
+    this.eventService.uploadEventImage(this.eventId,formData).subscribe({
+      next: (res:any) => {
+        alert('Image uploaded successfully!');
+        this.selectedFile = null;
+        this.isImageAdd.set(false);
+        this.loadEventData();
+      },
+      error: (err:any) => {
+        alert('Image upload failed.');
+      }
+    });
   }
 
   submitTicketType() {

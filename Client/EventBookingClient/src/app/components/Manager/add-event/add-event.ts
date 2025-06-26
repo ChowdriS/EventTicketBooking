@@ -14,6 +14,7 @@ export class AddEvent implements OnInit {
   eventForm!: FormGroup;
   ticketTypeForm!: FormGroup;
 
+  selectedFile: File | null = null;
   ticketTypes = signal<any[]>([]);
   isAddingTicketType = signal(false);
 
@@ -22,7 +23,12 @@ export class AddEvent implements OnInit {
   ngOnInit(): void {
     this.initForms();
   }
-
+  handleFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+    }
+  }
   initForms(): void {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
@@ -73,24 +79,42 @@ export class AddEvent implements OnInit {
       alert('Please complete the form and add at least one ticket type.');
       return;
     }
-
     const payload = {
-      ...this.eventForm.value,
-      eventType: this.eventForm.value.eventType === 'Seatable' ? 0 : 1,
-      ticketTypes: this.ticketTypes().map((t) => ({
+      Title: this.eventForm.value.title,
+      Description: this.eventForm.value.description,
+      EventDate: new Date(this.eventForm.value.eventDate).toISOString(),
+      EventType: this.eventForm.value.eventType === 'Seatable' ? 0 : 1,
+      TicketTypes: this.ticketTypes().map((t) => ({
         typeName: Number(t.typeName),
         price: Number(t.price),
         totalQuantity: Number(t.totalQuantity),
         description: t.description,
       })),
     };
-    console.log(payload);
-    payload.eventDate = new Date(payload.eventDate).toISOString();
-    console.log(payload);
-    this.eventService.addEvent(payload).subscribe({
+
+    const formData = new FormData();
+
+    formData.append('Title', payload.Title);
+    formData.append('Description', payload.Description);
+    formData.append('EventDate', payload.EventDate);
+    formData.append('EventType', payload.EventType.toString());
+
+    payload.TicketTypes.forEach((ticket, index) => {
+      formData.append(`TicketTypes[${index}].typeName`, ticket.typeName.toString());
+      formData.append(`TicketTypes[${index}].price`, ticket.price.toString());
+      formData.append(`TicketTypes[${index}].totalQuantity`, ticket.totalQuantity.toString());
+      formData.append(`TicketTypes[${index}].description`, ticket.description);
+    });
+
+    if (this.selectedFile) {
+      formData.append('Image', this.selectedFile);
+    }
+    console.log(formData)
+    this.eventService.addEvent(formData).subscribe({
       next: (res: any) => {
         alert('Event created successfully!');
-        this.router.navigate([this.router.url, res.data.id]);
+        this.router.navigate([`/manager/events/${res.data.id}`]);
+        // this.router.navigate([this.router.url, res.data.id]);
       },
       error: () => alert('Failed to create event'),
     });

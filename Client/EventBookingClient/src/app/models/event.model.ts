@@ -5,6 +5,7 @@ export class AppEvent {
   id: string = '';
   title: string = '';
   description: string = '';
+  images: any[] = [];
   eventDate: Date = new Date();
   eventStatus!: EventStatus;
   eventType: EventType = 1;
@@ -18,6 +19,7 @@ export class AppEvent {
     }
     const input = init as any;
     this.ticketTypes = input?.ticketTypes?.$values || [];
+    this.images = input?.images?.$values || [];
     this.bookedSeats = input?.bookedSeats?.$values || [];
   }
 }
@@ -35,4 +37,5 @@ export interface EventResponseTicketType {
   bookedQuantity: number;
   description: string;
   isDeleted: boolean;
+  imageUrl: string;
 }

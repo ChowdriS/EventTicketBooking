@@ -31,6 +31,19 @@
         <option value="NonSeatable">Non-Seatable</option>
       </select>
     </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
+      <input
+        type="file"
+        (change)="handleFileChange($event)"
+        accept="image/*"
+        class="form_input w-full"
+      />
+
+      <div *ngIf="selectedFile" class="mt-2 text-sm text-gray-600">
+        Selected: {{ selectedFile.name }}
+      </div>
+    </div>
   </form>
 
   <div>

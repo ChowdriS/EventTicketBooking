@@ -14,14 +14,16 @@ import { ApiResponse } from '../../../models/api-response.model';
 })
 export class EventById implements OnInit {
   eventId!: string;
+  currentImageIndex = 0;
   eventForm!: FormGroup;
   ticketTypeForm!: FormGroup;
-
-  isEditingEvent = signal(false);
-  isAddingTicketType = signal(false);
   ticketTypes = signal<any[]>([]);
   loading = signal(true);
   status = signal("");
+  imageIntervalId: any;
+  images = signal<any[]|null>([]);
+
+
   previousEventData = signal<AppEvent | null>(null);
 
   constructor(
@@ -35,6 +37,7 @@ export class EventById implements OnInit {
     this.eventId = this.route.snapshot.paramMap.get('id')!;
     this.initForms();
     this.loadEventData();
+    this.startImageSlider();
   }
 
   initForms(): void {
@@ -54,7 +57,17 @@ export class EventById implements OnInit {
       description: [''],
     });
   }
-
+  startImageSlider() {
+    this.imageIntervalId = setInterval(() => {
+      const images = this.images();
+      if (images && images.length > 1) {
+        this.currentImageIndex = (this.currentImageIndex + 1) % images.length;
+      }
+    }, 1500); 
+  }
+  isCancelled(event: AppEvent): boolean {
+    return event.eventStatus.toString() == "Cancelled";
+  }
   loadEventData() {
     this.loading.set(true);
     this.eventService.getEventById(this.eventId).subscribe({
@@ -62,6 +75,7 @@ export class EventById implements OnInit {
         console.log(res.data);
         this.eventForm.patchValue(res?.data);
         this.status.set(res?.data.eventStatus);
+        this.images.set(res.data?.images.$values);
         this.previousEventData.set(res.data);
         this.ticketTypes.set(res.data?.ticketTypes.$values || []);
         this.loading.set(false);
