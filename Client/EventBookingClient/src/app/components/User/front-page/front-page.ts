@@ -74,7 +74,7 @@ export class FrontPage {
         const rawItem = res.data?.items?.$values || [];
         const parsedEvents = rawItem.map((e: any) => new AppEvent(e));
         this.topEvent.set(parsedEvents[0]);
-        // console.log(this.topEvent())
+        console.log(this.topEvent())
       },
       error: () => alert("Failed to load events.")
     });

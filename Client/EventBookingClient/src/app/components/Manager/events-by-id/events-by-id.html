@@ -128,11 +128,8 @@
         @if(!isEditingEvent()){
             <input type="text" formControlName="eventType" class="form_input w-full" [readonly]="!isEditingEvent()" />
         }
-        @else{
-            <select formControlName="eventType" class="form_select w-full">
-              <option value="Seatable">Seatable</option>
-              <option value="NonSeatable">Non-Seatable</option>
-            </select>
+          @else{
+          <input type="text" formControlName="eventType" class="form_input w-full" [readonly]="isEditingEvent()" />
         }
       </div>
     </form>
@@ -199,9 +196,14 @@
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700">Price</label>
-            <input type="number" formControlName="price" class="form_input w-full" />
-          </div>
+          <label class="block text-sm font-medium text-gray-700">Price</label>
+          <input
+            type="number"
+            formControlName="price"
+            class="form_input w-full"
+            [readonly]="ticketTypeForm.get('id')?.value != null"
+          />
+        </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700">Quantity</label>

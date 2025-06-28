@@ -1,14 +1,16 @@
 import { EventType } from "@angular/router";
-import { BookedSeatStatus, EventStatus } from "./enum";
+import { BookedSeatStatus, EventCategory, EventStatus } from "./enum";
 
 export class AppEvent {
   id: string = '';
   title: string = '';
   description: string = '';
+  location: string = '';
   images: any[] = [];
   eventDate: Date = new Date();
   eventStatus!: EventStatus;
-  eventType: EventType = 1;
+  category!: EventCategory;
+  eventType!: EventType;
   ticketTypes: EventResponseTicketType[] = [];
   bookedSeats: EventResponseBookedSeat[] = [];
 

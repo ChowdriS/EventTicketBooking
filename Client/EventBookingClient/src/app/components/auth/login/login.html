@@ -4,6 +4,7 @@
   </div>
 
   <div class="flex-1 flex flex-col justify-center items-center px-10">
+    <div class=" p-4 orange_gradient text-5xl mb-8 logo_text">Login</div>
     <form class="w-full max-w-sm space-y-4" [formGroup]="loginForm" (ngSubmit)="onLogin()">
       <div>
         <input class="form_input" placeholder="Email" formControlName="email" type="email" />

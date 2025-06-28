@@ -39,7 +39,7 @@ export class Events {
       this.filterDate = dates;
     }
     this.eventsService
-      .getFilteredEvents(this.searchElement, this.filterDate, this.pageNumber(), this.pageSize)
+      .getFilteredEvents(-111,"",this.searchElement, this.filterDate, this.pageNumber(), this.pageSize)
       .subscribe({
         next: (res: ApiResponse<PagedResponse<any>>) => {
           const rawItems = res.data?.items?.$values || [];

@@ -7,20 +7,17 @@
     @for (event of events(); track event.id) {
       <div class=" prompt-card bg-white rounded-xl drop-shadow-lg p-6 mb-2">
         <div class=" flex-between">
-        <div class=" w-128 h-64 flex flex-col gap-2 justify-around items-start">
+        <div class=" w-128 h-64 flex flex-col gap-2 justify-center items-start">
           <div class=" flex-start gap-4">
             <h3 class="text-xl font-bold orange_gradient">{{ event.title }}</h3>
             @if(isCancelled(event)){
-              <h3 class="text-xl text-red-500">( Cancelled )</h3>
+              <h3 class="text-xl text-red-500">( Closed )</h3>
             }
           </div>
           <p class="text-gray-600 mt-2">{{ event.description }}</p>
           
           <p class="text-sm mt-1 text-gray-400">
             📅 Date: {{ event.eventDate | date: 'medium' }}
-          </p>
-          <p class="text-sm mt-1 text-gray-400">
-            📌 Status: {{ event.eventStatus }} | Type: {{ event.eventType }}
           </p>
           
           <div class="mt-4">

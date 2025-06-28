@@ -37,12 +37,12 @@
         type="file"
         (change)="handleFileChange($event)"
         accept="image/*"
-        class="form_input w-full"
+        class="block w-full text-gray-700 file:mr-4 file:py-2 file:px-4
+         file:rounded-lg file:border-0
+         file:text-sm file:font-semibold
+         file:bg-gray-100 file:text-gray-700 text-lg
+         hover:file:bg-gray-200"
       />
-
-      <div *ngIf="selectedFile" class="mt-2 text-sm text-gray-600">
-        Selected: {{ selectedFile.name }}
-      </div>
     </div>
   </form>
 

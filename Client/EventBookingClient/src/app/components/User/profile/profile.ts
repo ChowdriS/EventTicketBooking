@@ -20,7 +20,7 @@ export class Profile implements OnInit {
   passwordForm!: FormGroup;
   tickets: any[] = [];
   currentPage = 1;
-  pageSize = 2;
+  pageSize = 5;
   totalPages = 1;
 
   constructor(private userService: UserService, private fb: FormBuilder, private ticketService: TicketService) { }

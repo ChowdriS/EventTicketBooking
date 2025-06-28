@@ -5,6 +5,19 @@ export enum UserRole
     Manager
 }
 
+export enum EventCategory
+{
+    Music = 0,
+    Tech = 1,
+    Art = 2,
+    Education = 3,
+    Sports = 4,
+    Business = 5,
+    Festival = 6
+}
+
+
+
 export enum EventTypeEnum
 {
     Seatable = 0,

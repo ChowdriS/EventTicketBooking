@@ -89,7 +89,7 @@ export class EventsById implements OnInit {
         this.previousEventData.set(res.data);
         this.images.set(res.data?.images.$values);
         this.ticketTypes.set(res.data?.ticketTypes.$values || []);
-        // console.log(this.images());
+        console.log(this.ticketTypes());
         this.loading.set(false);
       },
       error: () => {
@@ -144,6 +144,7 @@ export class EventsById implements OnInit {
   startAddTicketType() {
     this.isAddingTicketType.set(true);
     this.ticketTypeForm.reset();
+    console.log(this.ticketTypeForm.value)
   }
 
   submitImage() {
@@ -205,6 +206,7 @@ export class EventsById implements OnInit {
   editTicketType(type: any) {
     this.ticketTypeForm.patchValue(type);
     this.isAddingTicketType.set(true);
+    console.log(this.ticketTypeForm.value)
   }
 
   deleteTicketType(typeId: string) {

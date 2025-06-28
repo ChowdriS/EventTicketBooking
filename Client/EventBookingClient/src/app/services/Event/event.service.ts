@@ -33,13 +33,25 @@ export class EventService {
   deleteEventImages(image:any): Observable<any>{
     return this.http.delete<any>(`${API_BASE_URL}/eventimage/delete/${image}`);
   }
-  getFilteredEvents(searchElement: string, filterDate: string, pageNumber: number, pageSize: number) {
+  getFilteredEvents(category: number,location : string,searchElement: string, filterDate: string, pageNumber: number, pageSize: number) {
     let url = `${API_BASE_URL}/events/filter?`;
-    if (searchElement && searchElement.trim() !== "") {
-      url += `searchElement=${searchElement}`;
+    if(category != -111){
+      url +=  `category=${category}`
     }
     else{
-      url += 'searchElement='
+      url +=  `category=`
+    }
+    if(location && location.trim() !== ""){
+      url +=  `&cityId=${location}`
+    }
+    else{
+      url +=  `&cityId=`
+    }
+    if (searchElement && searchElement.trim() !== "") {
+      url += `&searchElement=${searchElement}`;
+    }
+    else{
+      url += '&searchElement='
     }
     if (filterDate && filterDate.trim() !== "") {
       url += `&date=${filterDate}`;
@@ -52,5 +64,7 @@ export class EventService {
   uploadEventImage(id:string,payload : any){
     return this.http.post<any>(`${API_BASE_URL}/eventimage/upload/${id}`,payload);
   }
-
+  getCities(){
+    return this.http.get<any>(`${API_BASE_URL}/events/cities`);
+  }
 }
