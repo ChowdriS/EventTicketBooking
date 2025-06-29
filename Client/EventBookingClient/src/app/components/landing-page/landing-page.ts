@@ -20,8 +20,10 @@ export class LandingPage {
           let role = Getrole(token);
           if(role === 'User')
             this.router.navigate(['/user']);
-          else(role === 'Manager')
+          else if(role === 'Manager')
             this.router.navigate(['/manager']);
+          else if(role === 'Admin')
+            this.router.navigate(['/admin']);
         }
     }
 }

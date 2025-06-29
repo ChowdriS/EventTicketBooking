@@ -58,6 +58,8 @@ export class EventsById implements OnInit {
       eventDate: ['', Validators.required],
       eventType: ['', Validators.required],
       eventStatus: ['', Validators.required],
+      location: ['', Validators.required],
+      category: [-111, Validators.required],
     });
 
     this.ticketTypeForm = this.fb.group({
@@ -85,11 +87,14 @@ export class EventsById implements OnInit {
     this.loading.set(true);
     this.eventService.getEventById(this.eventId).subscribe({
       next: (res: any) => {
+
         this.eventForm.patchValue(res?.data);
         this.previousEventData.set(res.data);
         this.images.set(res.data?.images.$values);
         this.ticketTypes.set(res.data?.ticketTypes.$values || []);
         console.log(this.ticketTypes());
+        console.log(this.previousEventData());
+        console.log(this.eventForm.value);
         this.loading.set(false);
       },
       error: () => {

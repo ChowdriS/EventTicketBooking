@@ -43,8 +43,14 @@ export class EventById implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.eventId = this.route.snapshot.paramMap.get('id')!;
-    this.loadEvent();
+    this.route.paramMap.subscribe(params => {
+      const eventId = params.get('id');
+      console.log(eventId)
+      if (eventId) {
+        this.eventId = eventId;
+        this.loadEvent();
+      }
+    });
   }
   getSimilarEvents() {
     const categoryLabel = this.event()!.category;

@@ -28,6 +28,12 @@ export class Events {
   isCancelled(event: AppEvent): boolean {
     return event.eventStatus.toString() == "Cancelled";
   }
+  getTotalBooked(event  : AppEvent){
+    return event.ticketTypes.reduce((sum, ticket) => sum + (ticket.bookedQuantity), 0);
+  }
+  getTotalAvailable(event  : AppEvent){
+    return event.ticketTypes.reduce((sum, ticket) => sum + (ticket.totalQuantity), 0);
+  }
   loadEvents() {
     this.eventsService.getManagerEvents(this.pageNumber(), this.pageSize).subscribe({
       next: (res: ApiResponse<PagedResponse<any>>) => {

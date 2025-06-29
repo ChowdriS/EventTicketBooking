@@ -1,76 +1,84 @@
-<section class="p-4">
-  <div class=" flex-between">
-    <h2 class="text-4xl font-semibold mb-4 orange_gradient">All Events</h2>
-    <div class="flex flex-col sm:flex-row gap-4 mb-4 items-center">
-      <div class=" flex-end gap-2">
-        <input
-        type="text"
-        placeholder="Search..."
-        [(ngModel)]="searchElement"
-        class="form_input"
-        />
-        <input
-        type="date"
-        [(ngModel)]="filterDate"
-        class="form_input"
-        />
-        <button class="p-16 outline_btn" (click)="onFilterChange()">Filter</button>
+<section class="pl-64 pr-64 mt-8">
+    <h2 class="text-4xl font-semibold mb-8 orange_gradient">All Events</h2>
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+    <div class="col-span-1 bg-white rounded-xl p-6 drop-shadow-md flex flex-col gap-4 sticky top-6 h-fit">
+      <h3 class="text-xl font-semibold mb-2 text-gray-700">Filters</h3>
+
+      <select [(ngModel)]="location" class="form_select" [disabled]="cityOptions.length === 0">
+        <option value="">Select a City</option>
+        @for (city of cityOptions; track city.id) {
+        <option [value]="city.id">{{ city.label }}</option>
+        }
+      </select>
+
+      <select [(ngModel)]="selectedCategory" class="form_select">
+        <option [value]="-111">Select Category</option>
+        @for (option of categoryOptions; track option.value) {
+        <option [value]="option.value">{{ option.name }}</option>
+        }
+      </select>
+
+      <input type="text" placeholder="Search Event..." [(ngModel)]="searchElement" class="form_input" />
+
+      <input type="date" [(ngModel)]="filterDate" class="form_input" />
+
+      <button class="black_btn w-full" (click)="onFilterChange()">Filter</button>
+    </div>
+
+    <div class="col-span-1 lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-6">
+      @for (event of events(); track event.id) {
+      <div class="rounded-xl overflow-hidden shadow-lg flex flex-col transition hover:shadow-xl bg-white">
+        <div class="relative h-48">
+          <img class="w-full h-full object-cover"
+            [src]="event.images.length ? `http://localhost:5279/api/v1/eventimage/download/${event.images[0]}` : 'https://via.placeholder.com/500x300'"
+            alt="Event Image" />
+          <div class="absolute inset-0 bg-black opacity-20 hover:opacity-10 transition duration-300"></div>
+
+          <div
+            class="absolute top-2 right-2 bg-orange-600 text-white px-3 py-1 text-xs rounded shadow hover:bg-white hover:text-orange-600 transition duration-300 ease-in-out">
+            {{ event.category }}
+          </div>
+        </div>
+
+        <div class="px-4 py-3 flex-1">
+          <h3 class="text-lg font-semibold orange_gradient mb-1 line-clamp-1">{{ event.title }}</h3>
+
+          <div class="text-xs mb-1">
+            <span *ngIf="isCancelled(event)" class="text-red-500 font-medium">(Cancelled)</span>
+            <span *ngIf="!isCancelled(event) && getTotalBooked(event) >= getTotalAvailable(event)"
+              class="text-yellow-500 font-medium">(House Full)</span>
+          </div>
+
+          <p class="text-sm text-gray-600 line-clamp-2">
+            {{ event.description }}
+          </p>
+        </div>
+        <div class="px-4 py-2 text-xs text-gray-500 flex justify-between items-center bg-gray-100">
+          <span>📅 {{ event.eventDate | date: 'mediumDate' }}</span>
+          <span>📍 {{ event.location }}</span>
+        </div>
+        <div class="px-4 pt-2 text-xs text-gray-700">
+          <strong>Tickets:</strong>
+          <ul class="flex mt-1 gap-4 flex-wrap list-none">
+            @for (ticket of event.ticketTypes; track ticket.id) {
+            <li>
+              {{ ticketTypeToString(ticket.typeName) }} — ₹{{ ticket.price }}
+              ({{ ticket.totalQuantity - ticket.bookedQuantity }} left)
+            </li>
+            }
+          </ul>
+        </div>
+        <div class="px-4 py-3 flex-center m-2">
+          <button class="black_btn w-1/2" (click)="GetEventById(event)">
+            View Details
+          </button>
+        </div>
       </div>
+      }
     </div>
   </div>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
-    @for (event of events(); track event.id) {
-      <div class=" prompt-card bg-white rounded-xl drop-shadow-lg p-6 mb-6">
-        <div class=" flex-between">
-        <div class=" w-128 h-64 flex flex-col gap-2 justify-around items-start">
-          <div class=" flex-start gap-4">
-            <h3 class="text-xl font-bold orange_gradient">{{ event.title }}</h3>
-            @if(isCancelled(event)){
-              <h3 class="text-xl text-red-500">( Cancelled )</h3>
-            }
-          </div>
-          <p class="text-gray-600 mt-2">{{ event.description }}</p>
-          
-          <p class="text-sm mt-1 text-gray-400">
-            📅 Date: {{ event.eventDate | date: 'medium' }}
-          </p>
-          <p class="text-sm mt-1 text-gray-400">
-            📌 Status: {{ event.eventStatus }} | Type: {{ event.eventType }}
-          </p>
-          
-          <div class="mt-4">
-            <h4 class="font-semibold mb-2 text-orange-600">Ticket Types:</h4>
-            <ul class="text-sm space-y-1">
-              @for (ticket of event.ticketTypes; track ticket.id) {
-                <li class="text-gray-700">
-                  <span class="font-medium">{{ ticketTypeToString(ticket.typeName) }} </span> | 
-                  ₹{{ ticket.price }} |
-                  Available: {{ ticket.totalQuantity - ticket.bookedQuantity }}
-                </li>
-              }
-            </ul>
-          </div>
-        </div>
-        <div class=" w-128 h-64">
-          @if(event.images.length){
-            <img
-            [src]="`http://localhost:5279/api/v1/eventimage/download/${((event.images) ?? [])[0]}`"
-            alt="event image"
-            class="w-full h-full object-cover rounded-lg"
-            />
-          }
-          @else {
-            <div class=" bg-gray-500 w-full h-full">
-            </div>
-          } 
-        </div>
-        </div>
-        <button class="mt-4 black_btn w-full" (click)="GetEventById(event)">View Details</button>
-      </div>
-    }
-  </div>
-
-  <div class="flex justify-center mt-4 gap-2">
+  <div class="flex justify-center mt-4 gap-4">
     <button class="outline_btn" [disabled]="pageNumber() === 1" (click)="goToPage(pageNumber() - 1)">
       Previous
     </button>

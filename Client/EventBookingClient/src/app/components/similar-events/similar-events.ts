@@ -11,13 +11,17 @@ import { TicketTypeEnum } from '../../models/enum';
   styleUrl: './similar-events.css'
 })
 export class SimilarEvents{
-  @Input() data : AppEvent[] = [];
+  @Input() data! : AppEvent[];
   constructor(private router : Router){}
   GetEventById(event: AppEvent) {
     if (this.isCancelled(event)) {
       alert('The Event is Cancelled! Try a different Event!');
     } else {
-      this.router.navigate([this.router.url, event.id]);
+      const role = this.router.url.split('/')[1]; 
+      const url = `/${role}/events/${event.id}`;
+      this.router.navigateByUrl(url).then(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
     }
   }
   getTotalBooked(event  : AppEvent){

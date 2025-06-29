@@ -27,10 +27,29 @@
     <div>
       <label class="block text-sm font-medium text-gray-700">Type</label>
       <select formControlName="eventType" class="form_select w-full">
+        <option value="">Select Event Type</option>
         <option value="Seatable">Seatable</option>
         <option value="NonSeatable">Non-Seatable</option>
       </select>
     </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">City</label>
+      <select formControlName="location" class="form_select w-full" [disabled]="cityOptions.length === 0">
+        <option value="">Select a City</option>
+        @for (city of cityOptions; track city.id) {
+          <option [value]="city.id">{{ city.label }}</option>
+        }
+      </select>
+    </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Category</label>
+        <select formControlName="category" class="form_select w-full">
+          <option [value]="-111">Select Category</option>
+          @for (option of categoryOptions; track option.value) {
+            <option [value]="option.value">{{ option.name }}</option>
+          }
+        </select>
+      </div>
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-2">Upload Image</label>
       <input
