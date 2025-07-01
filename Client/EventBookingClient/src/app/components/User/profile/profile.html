@@ -109,18 +109,18 @@
       *ngFor="let ticket of tickets"
       [ngClass]="{
         'bg-red-50 text-gray-400': ticket.payment.status === 3,
-        'hover:bg-gray-50 transition': ticket.payment.status !== 3
+        'hover:bg-gray-50 transition text-gray-700': ticket.payment.status !== 3
       }"
     >
-      <td class="px-4 py-4 font-medium text-gray-800">{{ ticket.eventTitle }}</td>
-      <td class="px-4 py-4 text-gray-700">{{ ticket.ticketType }}</td>
+      <td class="px-4 py-4 font-medium">{{ ticket.eventTitle }}</td>
+      <td class="px-4 py-4 ">{{ ticket.ticketType }}</td>
       <td class="px-4 py-4 text-center">{{ ticket.quantity }}</td>
       <td class="px-4 py-4 text-right font-semibold">₹{{ ticket.totalPrice }}</td>
-      <td class="px-4 py-4 text-center text-gray-600">
+      <td class="px-4 py-4 text-center ">
         {{ ticket.bookedAt | date: 'medium' }}
       </td>
       <td class="px-4 py-4 text-center font-semibold">
-        <span *ngIf="ticket.payment.status === 3" class="text-red-500">Cancelled</span>
+        <span *ngIf="ticket.payment.status === 3" class="text-red-400">Cancelled</span>
         <span *ngIf="ticket.payment.status !== 3" class="text-green-600">Booked</span>
       </td>
       @if(ticket.payment.status !== 3)
@@ -140,7 +140,7 @@
         </td>}
         @else {
             <td class="px-4 py-4 text-center font-semibold">
-                <span class="text-red-500">No Action on Cancelled Tickets</span>
+                <span class="text-red-400">No Action on Cancelled Tickets</span>
             </td>
         }
 

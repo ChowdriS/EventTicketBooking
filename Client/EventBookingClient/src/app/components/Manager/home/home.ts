@@ -3,11 +3,12 @@ import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { UserService } from '../../../services/User/user-service';
 import { ApiResponse } from '../../../models/api-response.model';
 import { User } from '../../../models/user.model';
+import { Navbar } from "../../navbar/navbar";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, Navbar],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })

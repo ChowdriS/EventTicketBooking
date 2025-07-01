@@ -85,7 +85,11 @@ export class Events implements OnInit{
   GetEventById(event: AppEvent) {
     if (this.isCancelled(event)) {
       alert('The Event is Cancelled! Try a different Event!');
-    } else {
+    } 
+    else if(this.getTotalBooked(event) >= this.getTotalAvailable(event)){
+      alert("The Event is housefull! Try a different Event!")
+    }
+    else {
       this.router.navigate([this.router.url, event.id]);
     }
   }

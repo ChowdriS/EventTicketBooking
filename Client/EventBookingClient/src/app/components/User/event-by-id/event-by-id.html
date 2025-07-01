@@ -45,96 +45,13 @@
 
 
   </div>
-
-  <!-- <form *ngIf="form" [formGroup]="form" (ngSubmit)="submit()" class="grid md:grid-cols-2 gap-6">
-    <div class="md:col-span-2">
-      <label class="block text-sm font-medium text-gray-700">Ticket Type</label>
-      <select class="form_select w-full mt-1" formControlName="ticketTypeId">
-        <option [value]="null">-- Select Ticket Type --</option>
-        @for (type of event()?.ticketTypes; track type.id) {
-          <option [value]="type.id" [disabled]="type.isDeleted">
-            {{ ticketTypeToString(type.typeName) }} - ₹{{ type.price }}
-          </option>
-        }
-      </select>
-    </div>
-
-    <div>
-      <label class="block text-sm font-medium text-gray-700">Quantity</label>
-      <input
-        type="number"
-        class="form_input w-full mt-1"
-        formControlName="quantity"
-        min="1"
-      />
-    </div>
-
-    <div>
-      <label class="block text-sm font-medium text-gray-700">Payment Method</label>
-      <select class="form_select w-full mt-1" formControlName="paymentType">
-        <option [ngValue]="null">-- Select Payment Type --</option>
-        @for (type of paymentTypes; track type[1]) {
-          <option [ngValue]="type[1]">{{ type[0] }}</option>
-        }
-      </select>
-    </div>
-
-    @if (selectedTicketType() && event()!.eventType.toString() == eventTypeToString(0)) {
-      <div class="md:col-span-2 space-y-2">
-        <div class=" flex-between mb-4">
-          <label class="block text-sm font-medium text-gray-700">Select Seats</label>
-          <div class="flex items-center gap-2 text-sm text-black mb-2">
-            <div class="flex items-center gap-1">
-              <div class="w-4 h-4 rounded bg-orange-400 border border-gray-300"></div>
-              <span>Booked</span>
-            </div>
-            <div class="flex items-center gap-1">
-              <div class="w-4 h-4 rounded bg-green-500 border border-gray-300"></div>
-              <span>Selected</span>
-            </div>
-            <div class="flex items-center gap-1">
-              <div class="w-4 h-4 rounded bg-white border border-gray-500"></div>
-              <span>Available</span>
-            </div>
-          </div>
-
-        </div>
-        <div class="grid grid-cols-10 gap-2">
-          @for (seat of generateSeats(selectedTicketType()?.totalQuantity ?? 0); track seat) {
-            <button
-              type="button"
-              [disabled]="isSeatBooked(seat)"
-              [ngClass]="
-                isSeatBooked(seat)
-                  ? 'bg-orange-400 cursor-not-allowed'
-                  : isSeatSelected(seat)
-                    ? 'bg-green-500 text-white'
-                    : 'bg-white'
-              "
-              class="border rounded p-1 text-xs transition duration-200"
-              (click)="toggleSeat(seat)">
-              {{ seat }}
-            </button>
-
-          }
-        </div>
-        
-      </div>
-    }
-
-    <div class="md:col-span-2">
-      <button type="submit" class="black_btn w-full mt-4" [disabled]="form.invalid">
-        Book Now
-      </button>
-    </div>
-  </form> -->
-  <form *ngIf="form" [formGroup]="form" (ngSubmit)="submit()" class="grid md:grid-cols-2 gap-6">
+ <form *ngIf="form" [formGroup]="form" (ngSubmit)="submit()" class="grid md:grid-cols-2 gap-6">
   <div class="md:col-span-2">
     <label class="block text-sm font-medium text-gray-700">Ticket Type</label>
     <select class="form_select w-full mt-1" formControlName="ticketTypeId">
-      <option [value]="null">-- Select Ticket Type --</option>
+      <option [ngValue]="null">-- Select Ticket Type --</option>
       @for (type of event()?.ticketTypes; track type.id) {
-        <option [value]="type.id" [disabled]="type.isDeleted">
+        <option [ngValue]="type.id" [disabled]="type.isDeleted">
           {{ ticketTypeToString(type.typeName) }} - ₹{{ type.price }}
         </option>
       }

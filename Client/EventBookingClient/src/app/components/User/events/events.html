@@ -47,7 +47,7 @@
           <div class="text-xs mb-1">
             <span *ngIf="isCancelled(event)" class="text-red-500 font-medium">(Cancelled)</span>
             <span *ngIf="!isCancelled(event) && getTotalBooked(event) >= getTotalAvailable(event)"
-              class="text-yellow-500 font-medium">(House Full)</span>
+              class="text-red-500 font-medium">(House Full)</span>
           </div>
 
           <p class="text-sm text-gray-600 line-clamp-2">

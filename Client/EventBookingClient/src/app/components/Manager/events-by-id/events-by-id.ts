@@ -19,6 +19,7 @@ export class EventsById implements OnInit {
   eventForm!: FormGroup;
   ticketTypeForm!: FormGroup;
   currentImageIndex = 0;
+  prevTicketvalues = signal<any | null>(null);
   isEditingEvent = signal(false);
   isAddingTicketType = signal(false);
   ticketTypes = signal<any[]>([]);
@@ -65,7 +66,7 @@ export class EventsById implements OnInit {
 
     this.ticketTypeForm = this.fb.group({
       id: [null],
-      typeName: ['', Validators.required],
+      typeName: [null, Validators.required],
       price: ['', [Validators.required, Validators.min(1)]],
       totalQuantity: ['', [Validators.required, Validators.min(1)]],
       description: ['',Validators.required],
@@ -123,6 +124,7 @@ export class EventsById implements OnInit {
   }
   toggleEditEvent() {
     this.isEditingEvent.set(!this.isEditingEvent());
+    this.isImageEdit.set(false);
   }
 
   saveEvent() {
@@ -179,6 +181,14 @@ export class EventsById implements OnInit {
 
   submitTicketType() {
     if (this.ticketTypeForm.invalid) return;
+    console.log(this.ticketTypeForm.value.totalQuantity)
+    console.log(this.prevTicketvalues())
+    if(this.ticketTypeForm.value.totalQuantity < this.prevTicketvalues().totalQuantity && 
+      this.prevTicketvalues().bookedQuantity > this.ticketTypeForm.value.totalQuantity){
+        alert("Invalid updation! \n The updated quantity is lesser than the booked seats!");
+        return;
+    }
+    // debugger;
     const ticketData = {
       ...this.ticketTypeForm.value,
       eventId: this.eventId,
@@ -217,6 +227,7 @@ export class EventsById implements OnInit {
   }
   editTicketType(type: any) {
     this.ticketTypeForm.patchValue(type);
+    this.prevTicketvalues.set(type);
     this.isAddingTicketType.set(true);
     console.log(this.ticketTypeForm.value)
   }
@@ -237,5 +248,6 @@ export class EventsById implements OnInit {
   cancelEditTicketType() {
     this.ticketTypeForm.reset();
     this.isAddingTicketType.set(false);
+    this.prevTicketvalues.set(null);
   }
 }

@@ -1,5 +1,5 @@
 import { EventType } from "@angular/router";
-import { BookedSeatStatus, EventCategory, EventStatus } from "./enum";
+import { BookedSeatStatus, EventCategory, EventStatus, EventTypeEnum, TicketTypeEnum } from "./enum";
 
 export class AppEvent {
   id: string = '';
@@ -10,7 +10,7 @@ export class AppEvent {
   eventDate: Date = new Date();
   eventStatus!: EventStatus;
   category!: EventCategory;
-  eventType!: EventType;
+  eventType!: EventTypeEnum;
   ticketTypes: EventResponseTicketType[] = [];
   bookedSeats: EventResponseBookedSeat[] = [];
 
@@ -33,7 +33,7 @@ export interface EventResponseBookedSeat {
 
 export interface EventResponseTicketType {
   id: string;
-  typeName: EventType;
+  typeName: TicketTypeEnum;
   price: number;
   totalQuantity: number;
   bookedQuantity: number;

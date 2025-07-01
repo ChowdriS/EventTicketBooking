@@ -1,5 +1,6 @@
 <section class="max-w-xl mx-auto mt-8 px-4 sm:px-6 lg:px-8 py-10 bg-white rounded-xl shadow-2xl space-y-6">
   <h2 class="text-2xl font-bold mb-4 orange_gradient">User Profile</h2>
+  
   <div class="p-4 border rounded-xl bg-gray-50 space-y-4">
     <div>
       <label class="block text-sm font-medium text-gray-700">Email</label>
@@ -8,78 +9,93 @@
 
     <div>
       <label class="block text-sm font-medium text-gray-700">Role</label>
-      <p class="text-gray-800 capitalize">{{ user.role}}</p>
+      <p class="text-gray-800 capitalize">{{ user.role }}</p>
     </div>
     
-    <form [formGroup]="usernameForm">
+    <form [formGroup]="usernameForm" class="mt-4">
       <label class="block text-sm font-medium text-gray-700">Username</label>
-      <div class="flex sm:flex-row sm:items-center gap-4 mt-1">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4 mt-1">
         <input
           type="text"
-          class="w-full"
+          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           formControlName="username"
-          [readonly]="!isEditingUsername"
-          [ngClass]="{ 'form_input': isEditingUsername}"
+          [readOnly]="!isEditingUsername"
+          [ngClass]="{'bg-gray-100': !isEditingUsername, 'bg-white border-gray-300': isEditingUsername}"
         />
         @if(isEditingUsername){
-          <button class=" outline_btn" (click)="CancelEdit()">Cancel </button>
+          <button 
+            type="button"
+            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            (click)="CancelEdit()"
+          >
+            Cancel
+          </button>
         }
         <button
           type="button"
-          class="black_btn"
+          class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
           (click)="isEditingUsername ? saveUsername() : isEditingUsername = true"
         >
           {{ isEditingUsername ? 'Save' : 'Edit' }}
         </button>
       </div>
-      <p *ngIf="usernameForm.get('username')?.invalid && isEditingUsername" class="text-sm text-red-600 mt-1">
-        Username is required.
-      </p>
+      @if(usernameForm.get('username')?.invalid && isEditingUsername) {
+        <p class="text-sm text-red-600 mt-1">
+          Username is required.
+        </p>
+      }
     </form>
   </div>
 
   <div class="space-y-2">
-    <button class="black_btn" (click)="isChangingPassword = !isChangingPassword">
+    <button 
+      class="w-full px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+      (click)="isChangingPassword = !isChangingPassword"
+    >
       {{ isChangingPassword ? 'Hide Change Password Form' : 'Change Password' }}
     </button>
 
-    <form *ngIf="isChangingPassword" [formGroup]="passwordForm" class="mt-4 space-y-4 bg-gray-50 p-4 border rounded-xl">
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Old Password</label>
-        <input
-          type="password"
-          class="form_input w-full mt-1"
-          formControlName="oldPassword"
-        />
-        <p *ngIf="passwordForm.get('oldPassword')?.invalid && passwordForm.get('oldPassword')?.touched"
-           class="text-sm text-red-600 mt-1">
-          Old password is required.
-        </p>
-      </div>
+    @if(isChangingPassword) {
+      <form [formGroup]="passwordForm" class="mt-4 space-y-4 bg-gray-50 p-4 border rounded-xl">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Old Password</label>
+          <input
+            type="password"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            formControlName="oldPassword"
+          />
+          @if(passwordForm.get('oldPassword')?.invalid && passwordForm.get('oldPassword')?.touched) {
+            <p class="text-sm text-red-600 mt-1">
+              Old password is required.
+            </p>
+          }
+        </div>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700">New Password</label>
-        <input
-          type="password"
-          class="form_input w-full mt-1"
-          formControlName="newPassword"
-        />
-        <p *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched"
-           class="text-sm text-red-600 mt-1">
-          New password must be at least 6 characters.
-        </p>
-      </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">New Password</label>
+          <input
+            type="password"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            formControlName="newPassword"
+          />
+          @if(passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched) {
+            <p class="text-sm text-red-600 mt-1">
+              New password must be at least 6 characters.
+            </p>
+          }
+        </div>
 
-      <div class="flex flex-col sm:flex-row gap-4 mt-4">
-        <button
-          type="button disabled:cursor-not-allowed"
-          class="black_btn"
-          (click)="changePassword()"
-          [disabled]="passwordForm.invalid"
-        >
-          Save Password
-        </button>
-      </div>
-    </form>
+        <div class="flex flex-col sm:flex-row gap-4 mt-4">
+          <button
+            type="button"
+            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            (click)="changePassword()"
+            [disabled]="passwordForm.invalid"
+          >
+            Save Password
+          </button>
+        </div>
+      </form>
+    }
   </div>
 </section>

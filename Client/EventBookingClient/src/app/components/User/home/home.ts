@@ -4,10 +4,11 @@ import { UserService } from '../../../services/User/user-service';
 import { User } from '../../../models/user.model';
 import { ApiResponse } from '../../../models/api-response.model';
 import { SignalRService } from '../../../services/Notification/signalr-service';
+import { Navbar } from "../../navbar/navbar";
 
 @Component({
   selector: 'app-home',
-  imports: [RouterOutlet,RouterLink],
+  imports: [RouterOutlet, Navbar],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })

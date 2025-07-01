@@ -1,4 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { EventStatus, TicketTypeEnum } from '../models/enum';
+import { EventType } from '@angular/router';
 
 @Pipe({ name: 'eventStatus' })
 export class EventStatusPipe implements PipeTransform {

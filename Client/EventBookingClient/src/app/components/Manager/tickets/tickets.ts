@@ -27,6 +27,7 @@ export class Tickets {
     this.ticketService.getTicketsByEventId(this.eventId,this.currentPage, this.pageSize).subscribe({
       next: (res) => {
         this.tickets = res.data.items.$values;
+        console.log(this.tickets);
         this.totalPages = res.data.totalPages;
         this.currentPage = res.data.pageNumber;
       },

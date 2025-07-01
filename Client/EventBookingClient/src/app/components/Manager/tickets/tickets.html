@@ -1,12 +1,13 @@
 
 <section class="max-w-6xl mx-auto mt-12 px-4 sm:px-6 lg:px-8 py-10">
-  <h2 class="text-2xl font-semibold mb-6 orange_gradient">My Tickets</h2>
+  <h2 class="text-2xl font-semibold mb-6 orange_gradient">Booked Tickets</h2>
 
   <div *ngIf="tickets.length > 0; else noTickets" class="overflow-x-auto bg-white rounded-xl shadow-lg p-4">
     <table class="min-w-full divide-y divide-gray-200 text-sm text-left">
   <thead class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider">
     <tr>
-      <th class="px-4 py-3 text-left rounded-tl-xl">Event</th>
+      <th class="px-4 py-3 text-left rounded-tl-xl">User Id</th>
+      <!-- <th class="px-4 py-3 text-left ">Event Title</th> -->
       <th class="px-4 py-3 text-left">Type</th>
       <th class="px-4 py-3 text-center">Qty</th>
       <th class="px-4 py-3 text-right">Total Price</th>
@@ -22,7 +23,8 @@
         'hover:bg-gray-50 transition': ticket.payment.status !== 3
       }"
     >
-      <td class="px-4 py-4 font-medium text-gray-800">{{ ticket.eventTitle }}</td>
+      <td class="px-4 py-4 font-medium text-gray-800">{{ ticket.userId }}</td>
+      <!-- <td class="px-4 py-4 font-medium text-gray-800">{{ ticket.eventTitle }}</td> -->
       <td class="px-4 py-4 text-gray-700">{{ ticket.ticketType }}</td>
       <td class="px-4 py-4 text-center">{{ ticket.quantity }}</td>
       <td class="px-4 py-4 text-right font-semibold">₹{{ ticket.totalPrice }}</td>

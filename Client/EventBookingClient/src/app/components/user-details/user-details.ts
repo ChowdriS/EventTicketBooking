@@ -1,29 +1,38 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, NgControl, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { User } from '../../models/user.model';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../services/User/user-service';
-import { TicketService } from '../../services/Ticket/ticket.service';
 import { NotificationService } from '../../services/Notification/notification-service';
 import { ApiResponse } from '../../models/api-response.model';
+import { User } from '../../models/user.model';
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-user-details',
-  imports: [ ReactiveFormsModule, CommonModule],
   templateUrl: './user-details.html',
-  styleUrl: './user-details.css',
-  standalone: true
+  styleUrls: ['./user-details.css'],
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule]
 })
 export class UserDetails implements OnInit {
-  user: User = { email: '', role: '', username: '' }; 
+  user: User = { email: '', role: '', username: '' };
   isEditingUsername = false;
   isChangingPassword = false;
   usernameForm!: FormGroup;
   passwordForm!: FormGroup;
-  originalName:string = '';
-  constructor(private userService: UserService, private fb: FormBuilder,
-     private ticketService: TicketService,private notificationService : NotificationService) { }
+  originalName = '';
+
+  constructor(
+    private userService: UserService,
+    private fb: FormBuilder,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit(): void {
+    this.initializeForms();
+    this.loadUserDetails();
+  }
+
+  private initializeForms(): void {
     this.usernameForm = this.fb.group({
       username: ['', Validators.required]
     });
@@ -32,52 +41,63 @@ export class UserDetails implements OnInit {
       oldPassword: ['', Validators.required],
       newPassword: ['', [Validators.required, Validators.minLength(6)]]
     });
-    this.loadUserDetails();
-  }
-  CancelEdit(){
-    this.usernameForm.patchValue({ username: this.originalName });
-    this.isEditingUsername = false;
   }
 
-  loadUserDetails() {
-    this.userService.getUserDetails().subscribe((res: ApiResponse) => {
-      this.user = res.data;
-      console.log(this.user)
-      this.usernameForm.get('username')?.setValue(this.user.username);
-      this.originalName = this.user.username;
+  loadUserDetails(): void {
+    this.userService.getUserDetails().subscribe({
+      next: (res: ApiResponse<User>) => {
+        this.user = res.data || { email: '', role: '', username: '' };
+        this.usernameForm.patchValue({ username: this.user.username });
+        this.originalName = this.user.username;
+      },
+      error: () => console.error('Failed to load user details')
     });
   }
 
-  saveUsername() {
+  saveUsername(): void {
     if (this.usernameForm.invalid) return;
+    
+    const newUsername = this.usernameForm.value.username;
+    if (this.user.username === newUsername) {
+      this.isEditingUsername = false;
+      return;
+    }
 
-    const payload = { username: this.usernameForm.value.username };
-
-    this.userService.updateUsername(payload).subscribe({
-      next: (res: ApiResponse) => {
-        this.user = res.data;
+    this.userService.updateUsername({ username: newUsername }).subscribe({
+      next: (res: ApiResponse<User>) => {
+        this.user = res.data || this.user;
+        this.notificationService.success('Username Changed');
         this.isEditingUsername = false;
-        this.notificationService.success("Username Changed");
-        this.loadUserDetails();
+        this.originalName = newUsername;
       },
       error: () => alert('Failed to update username.')
     });
   }
 
-  changePassword() {
+  changePassword(): void {
     if (this.passwordForm.invalid) return;
+    
+    const { oldPassword, newPassword } = this.passwordForm.value;
+    if (oldPassword === newPassword) {
+      alert('The old and new passwords are same. Try stronger passwords!');
+      return;
+    }
 
-    this.userService.changePassword(this.passwordForm.value).subscribe({
-      next: (res: ApiResponse) => {
+    this.userService.changePassword({ oldPassword, newPassword }).subscribe({
+      next: () => {
         alert('Password changed successfully!');
-        this.isChangingPassword = false;
-        this.passwordForm.reset();
+        this.cancelPasswordChange();
       },
       error: () => alert('Failed to change password.')
     });
   }
 
-  cancelPasswordChange() {
+  CancelEdit(): void {
+    this.usernameForm.patchValue({ username: this.originalName });
+    this.isEditingUsername = false;
+  }
+
+  cancelPasswordChange(): void {
     this.isChangingPassword = false;
     this.passwordForm.reset();
   }
