@@ -79,7 +79,7 @@
     </div>
   </div>
   <div class="flex justify-center mt-4 gap-4">
-    <button class="outline_btn" [disabled]="pageNumber() === 1" (click)="goToPage(pageNumber() - 1)">
+    <button class="outline_btn disabled:cursor-not-allowed" [disabled]="pageNumber() === 1" (click)="goToPage(pageNumber() - 1)">
       Previous
     </button>
 
@@ -87,7 +87,7 @@
       Page {{ pageNumber() }} of {{ totalPages() }}
     </span>
 
-    <button class="black_btn" [disabled]="pageNumber() === totalPages()" (click)="goToPage(pageNumber() + 1)">
+    <button class="black_btn disabled:cursor-not-allowed" [disabled]="pageNumber() === totalPages()" (click)="goToPage(pageNumber() + 1)">
       Next
     </button>
   </div>

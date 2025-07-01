@@ -1,4 +1,4 @@
-<section class="max-w-xl mx-auto mt-8 px-4 sm:px-6 lg:px-8 py-10 bg-white rounded-xl shadow-2xl space-y-6">
+<!-- <section class="max-w-xl mx-auto mt-8 px-4 sm:px-6 lg:px-8 py-10 bg-white rounded-xl shadow-2xl space-y-6">
   <h2 class="text-2xl font-bold mb-4 orange_gradient">User Profile</h2>
 
   <div class="p-4 border rounded-xl bg-gray-50 space-y-4">
@@ -23,7 +23,7 @@
           [ngClass]="{ 'form_input': isEditingUsername}"
         />
         @if(isEditingUsername){
-          <button class=" outline_btn" (click)="isEditingUsername = false">Cancel </button>
+          <button class=" outline_btn" (click)="CancelEdit()">Cancel </button>
         }
         <button
           type="button"
@@ -73,7 +73,7 @@
 
       <div class="flex flex-col sm:flex-row gap-4 mt-4">
         <button
-          type="button"
+          type="button disabled:cursor-not-allowed"
           class="black_btn"
           (click)="changePassword()"
           [disabled]="passwordForm.invalid"
@@ -83,7 +83,10 @@
       </div>
     </form>
   </div>
-</section>
+</section> -->
+
+<app-user-details></app-user-details>
+
 
 <section class="max-w-6xl mx-auto mt-12 px-4 sm:px-6 lg:px-8 py-10">
   <h2 class="text-2xl font-semibold mb-6 orange_gradient">My Tickets</h2>
@@ -124,7 +127,7 @@
       {<td class="px-4 py-4">
         <div class="flex justify-end gap-2 flex-wrap">
             <button
-            class="outline_btn px-3 py-1"
+            class="outline_btn px-3 py-1 disabled:cursor-not-allowed"
             (click)="cancelTicket(ticket.id)"
             [disabled]="ticket.payment.status === 3"
             >
@@ -148,7 +151,7 @@
 
     <div class="flex justify-between items-center mt-6">
       <button
-        class="outline_btn"
+        class="outline_btn disabled:cursor-not-allowed"
         (click)="changePage(currentPage - 1)"
         [disabled]="currentPage === 1"
       >
@@ -160,7 +163,7 @@
       </span>
 
       <button
-        class="black_btn"
+        class="black_btn disabled:cursor-not-allowed"
         (click)="changePage(currentPage + 1)"
         [disabled]="currentPage === totalPages"
       >

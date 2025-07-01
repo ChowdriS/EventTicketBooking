@@ -1,5 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { EventService } from '../../../services/Event/event.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -35,6 +35,14 @@ export class AddEvent implements OnInit {
         value: EventCategory[key as keyof typeof EventCategory]
       }));
   }
+  handleFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+      this.eventForm.get('image')?.setValue(this.selectedFile);
+      this.eventForm.get('image')?.markAsTouched(); 
+    }
+  }
   loadCities(){
     this.eventService.getCities().subscribe({
       next:(res:ApiResponse)=>{
@@ -47,33 +55,31 @@ export class AddEvent implements OnInit {
       }
     });
   }
-  handleFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
-    }
-  }
   initForms(): void {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
-      description: [''],
-      eventDate: ['', Validators.required],
+      description: ['', Validators.required],
+      eventDate: ['', [Validators.required,this.futureDateValidator]],
       eventType: ['', Validators.required],
       location: ['', Validators.required],
       category: [-111, Validators.required],
+      image: [null, Validators.required]
     });
 
     this.ticketTypeForm = this.fb.group({
       id: [null],
-      typeName: [0, Validators.required],
+      typeName: [null, Validators.required],
       price: [0, [Validators.required, Validators.min(1)]],
       totalQuantity: [0, [Validators.required, Validators.min(1)]],
-      description: [''],
+      description: ['', Validators.required],
     });
   }
-
+  futureDateValidator(control: AbstractControl): ValidationErrors | null {
+    const selectedDate = new Date(control.value);
+    const now = new Date();
+    return selectedDate > now ? null : { pastDate: true };
+  }
   startAddTicketType() {
-    this.ticketTypeForm.reset({ typeName: 0 });
     this.isAddingTicketType.set(true);
   }
 
@@ -137,7 +143,7 @@ export class AddEvent implements OnInit {
     });
 
     if (this.selectedFile) {
-      formData.append('Image', this.selectedFile);
+      formData.append('Image', this.eventForm.get('image')?.value);
     }
     console.log(formData)
     this.eventService.addEvent(formData).subscribe({

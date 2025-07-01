@@ -30,6 +30,9 @@ export class EventService {
   getAllEventImages(): Observable<any>{
     return this.http.get<any>(`${API_BASE_URL}/eventimage/getall`);
   }
+  getMyEventImages(): Observable<any>{
+    return this.http.get<any>(`${API_BASE_URL}/eventimage/myevent/getall`);
+  }
   deleteEventImages(image:any): Observable<any>{
     return this.http.delete<any>(`${API_BASE_URL}/eventimage/delete/${image}`);
   }

@@ -41,7 +41,7 @@
 
     <div class="flex justify-between items-center mt-6">
       <button
-        class="outline_btn"
+        class="outline_btn disabled:cursor-not-allowed"
         (click)="changePage(currentPage - 1)"
         [disabled]="currentPage === 1"
       >
@@ -53,7 +53,7 @@
       </span>
 
       <button
-        class="black_btn"
+        class="black_btn disabled:cursor-not-allowed"
         (click)="changePage(currentPage + 1)"
         [disabled]="currentPage === totalPages"
       >

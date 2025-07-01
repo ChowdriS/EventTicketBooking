@@ -5,10 +5,12 @@ import { EventType, Router, RouterLink } from '@angular/router';
 import { ApiResponse, PagedResponse } from '../../../models/api-response.model';
 import { CommonModule } from '@angular/common';
 import { EventStatus, EventTypeEnum, TicketTypeEnum } from '../../../models/enum';
+import { Slider } from "../../slider/slider";
+import { TopEvent } from "../../top-event/top-event";
 
 @Component({
   selector: 'app-front-page',
-  imports: [RouterLink,CommonModule],
+  imports: [CommonModule, Slider, TopEvent],
   templateUrl: './front-page.html',
   styleUrl: './front-page.css'
 })

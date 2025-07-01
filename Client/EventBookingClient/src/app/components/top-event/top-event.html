@@ -1,29 +1,12 @@
-<!-- <section class="max-w-6xl mx-auto px-4 mt-4">
-  @if (images()?.length > 0) {
-  <div class="relative w-full h-[440px] overflow-hidden rounded-xl shadow-md">
-    <div class="flex transition-transform duration-700 ease-in-out"
-      [style.transform]="'translateX(-' + (getCurrentIndex() * 100) + '%)'">
-      @for (img of images(); track img.id) {
-      <div class="min-w-full h-full">
-        <img [src]="'http://localhost:5279/api/v1/eventimage/download/' + img.id"
-          class="w-full h-full object-cover rounded-xl" alt="event image" (click)="routeToEvent(img)" />
-      </div>
-      }
-    </div>
-  </div>
-  } @else {
-  <div class="w-full h-[360px] flex items-center justify-center text-gray-400 bg-gray-200 rounded-xl shadow-inner">
-    <p class="text-lg font-medium">[ Upcoming Events Slider Coming Soon ]</p>
-  </div>
-  }
-</section> -->
-<app-slider></app-slider>
-<!-- <section class="mt-12 max-w-6xl mx-auto px-4">
+@if(topEvent != null){
+<section class="mt-12 max-w-6xl mx-auto px-4">
   <div class=" flex-between font-bold items-center my-2">
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Upcoming Event</h2>
     <div class=" flex-center gap-2">
       <button class=" black_btn" [routerLink]="[this.router.url, 'events']">View All Events</button>
-      <button class=" outline_btn" [routerLink]="[this.router.url,'events','add']">Add Event</button>
+      @if(role == 'Manager'){
+          <button class=" outline_btn" [routerLink]="[this.router.url,'events','add']">Add Event</button>
+        }
     </div>
   </div>
   @if (topEvent(); as event) {
@@ -76,6 +59,5 @@
   <p class="text-gray-400">No upcoming events found.</p>
   }
 
-</section> -->
-
-<app-top-event [topEvent]="topEvent"></app-top-event>
+</section>
+}

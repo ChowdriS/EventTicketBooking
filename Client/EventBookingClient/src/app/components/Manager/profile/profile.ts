@@ -8,11 +8,13 @@ import { User } from '../../../models/user.model';
 import { ApiResponse } from '../../../models/api-response.model';
 import { UserService } from '../../../services/User/user-service';
 import { TicketService } from '../../../services/Ticket/ticket.service';
+import { NotificationService } from '../../../services/Notification/notification-service';
+import { UserDetails } from "../../user-details/user-details";
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, UserDetails],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
@@ -27,11 +29,16 @@ export class Profile implements AfterViewInit {
   earningsTableSignal = signal<{ event: string; amount: number }[]>([]);
   earningsTable = computed(() => this.earningsTableSignal());
   earningsTableTotal = computed(() => this.earningsTableSignal().reduce((sum, item) => sum + item.amount, 0));
-
+  originalName:string = '';
+  
+  CancelEdit(){
+    this.usernameForm.patchValue({ username: this.originalName });
+    this.isEditingUsername = false;
+  }
 
   constructor(private http: HttpClient,
     private analyticsService: AnalyticsService,private userService: UserService, 
-    private fb: FormBuilder, private ticketService: TicketService) { }
+    private fb: FormBuilder, private ticketService: TicketService, private notificationService : NotificationService) { }
 
 
   ngOnInit(): void {
@@ -54,6 +61,7 @@ export class Profile implements AfterViewInit {
     this.userService.getUserDetails().subscribe((res: ApiResponse) => {
       this.user = res.data;
       this.usernameForm.get('username')?.setValue(this.user.username);
+      this.originalName = this.user.username;
     });
   }
 
@@ -66,6 +74,8 @@ export class Profile implements AfterViewInit {
       next: (res: ApiResponse) => {
         this.user = res.data;
         this.isEditingUsername = false;
+        this.notificationService.success("Username Changed");
+        this.loadUserDetails();
       },
       error: () => alert('Failed to update username.')
     });

@@ -1,0 +1,19 @@
+<section class="max-w-6xl mx-auto px-4 mt-4">
+  @if (images()?.length > 0) {
+  <div class="relative w-full h-[440px] overflow-hidden rounded-xl shadow-md">
+    <div class="flex transition-transform duration-700 ease-in-out"
+      [style.transform]="'translateX(-' + (getCurrentIndex() * 100) + '%)'">
+      @for (img of images(); track img.id) {
+      <div class="min-w-full h-full">
+        <img [src]="'http://localhost:5279/api/v1/eventimage/download/' + img.id"
+          class="w-full h-full object-cover rounded-xl" alt="event image" (click)="routeToEvent(img)" />
+      </div>
+      }
+    </div>
+  </div>
+  } @else {
+  <div class="w-full h-[360px] flex items-center justify-center text-gray-400 bg-gray-200 rounded-xl shadow-inner">
+    <p class="text-lg font-medium">[ Upcoming Events Slider Coming Soon ]</p>
+  </div>
+  }
+</section>

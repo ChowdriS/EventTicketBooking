@@ -1,11 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { EventService } from '../../../services/Event/event.service';
 import { TicketTypeService } from '../../../services/TicketType/ticket-type.service';
 import { ActivatedRoute, Route, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AppEvent } from '../../../models/event.model';
 import { EventStatus, EventTypeEnum } from '../../../models/enum';
+import { ApiResponse } from '../../../models/api-response.model';
 
 @Component({
   selector: 'app-events-by-id',
@@ -54,7 +55,7 @@ export class EventsById implements OnInit {
   initForms(): void {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
-      description: [''],
+      description: ['', Validators.required],
       eventDate: ['', Validators.required],
       eventType: ['', Validators.required],
       eventStatus: ['', Validators.required],
@@ -67,7 +68,7 @@ export class EventsById implements OnInit {
       typeName: ['', Validators.required],
       price: ['', [Validators.required, Validators.min(1)]],
       totalQuantity: ['', [Validators.required, Validators.min(1)]],
-      description: [''],
+      description: ['',Validators.required],
     });
   }
   deleteImage(image:any){
@@ -126,16 +127,18 @@ export class EventsById implements OnInit {
 
   saveEvent() {
     if (this.eventForm.invalid) return;
-    console.log(this.previousEventData());
+    // console.log(this.previousEventData());
     const formValue = this.eventForm.value;
     const payload: any = {};
     payload.title = formValue.title !== this.previousEventData()?.title ? formValue.title : null;
     payload.description = formValue.description !== this.previousEventData()?.description ? formValue.description : null;
     payload.eventDate = formValue.eventDate !== this.previousEventData()?.eventDate ? formValue.eventDate : null;
-    payload.eventType = formValue.eventType !== this.previousEventData()?.eventType ? EventTypeEnum[formValue.eventType as keyof typeof EventTypeEnum] : null;
+    // payload.eventType = formValue.eventType !== this.previousEventData()?.eventType ? EventTypeEnum[formValue.eventType as keyof typeof EventTypeEnum] : null;
     payload.eventStatus = formValue.eventStatus !== this.previousEventData()?.eventStatus ? EventStatus[formValue.eventStatus as keyof typeof EventStatus] : null;
-      this.eventService.updateEvent(this.eventId, payload).subscribe({
-        next: () => {
+    console.log(payload);
+    this.eventService.updateEvent(this.eventId, payload).subscribe({
+        next: (res:ApiResponse) => {
+          console.log(res);
           alert('Event updated successfully');
           this.isEditingEvent.set(false);
           this.loadEventData();
@@ -207,7 +210,11 @@ export class EventsById implements OnInit {
       });
     }
   }
-
+  futureDateValidator(control: AbstractControl): ValidationErrors | null {
+    const selectedDate = new Date(control.value);
+    const now = new Date();
+    return selectedDate > now ? null : { pastDate: true };
+  }
   editTicketType(type: any) {
     this.ticketTypeForm.patchValue(type);
     this.isAddingTicketType.set(true);

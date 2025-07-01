@@ -8,10 +8,12 @@ import { EventStatus, EventTypeEnum, TicketTypeEnum } from '../../../models/enum
 import { UserService } from '../../../services/User/user-service';
 import { Getrole } from '../../../misc/Token';
 import { Auth } from '../../../services/Auth/auth';
+import { Slider } from "../../slider/slider";
+import { TopEvent } from "../../top-event/top-event";
 
 @Component({
   selector: 'app-front-page',
-  imports: [RouterLink,CommonModule],
+  imports: [RouterLink, CommonModule, Slider, TopEvent],
   templateUrl: './front-page.html',
   styleUrl: './front-page.css'
 })

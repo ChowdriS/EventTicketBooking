@@ -1,51 +1,48 @@
-import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, NgControl, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { User } from '../../../models/user.model';
-import { ApiResponse } from '../../../models/api-response.model';
-import { UserService } from '../../../services/User/user-service';
-import { Router, RouterLink } from '@angular/router';
-import { NotificationService } from '../../../services/Notification/notification-service';
-import { UserDetails } from "../../user-details/user-details";
-
+import { User } from '../../models/user.model';
+import { UserService } from '../../services/User/user-service';
+import { TicketService } from '../../services/Ticket/ticket.service';
+import { NotificationService } from '../../services/Notification/notification-service';
+import { ApiResponse } from '../../models/api-response.model';
 @Component({
-  selector: 'app-profile',
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, UserDetails],
-  templateUrl: './profile.html',
-  styleUrls: ['./profile.css']
+  selector: 'app-user-details',
+  imports: [ ReactiveFormsModule, CommonModule],
+  templateUrl: './user-details.html',
+  styleUrl: './user-details.css',
+  standalone: true
 })
-export class Profile implements OnInit {
-  user!: User;
+export class UserDetails implements OnInit {
+  user: User = { email: '', role: '', username: '' }; 
   isEditingUsername = false;
   isChangingPassword = false;
   usernameForm!: FormGroup;
   passwordForm!: FormGroup;
   originalName:string = '';
-  constructor(
-    private userService: UserService, 
-    private fb: FormBuilder,public router : Router,
-    private notificationService : NotificationService) { }
-
+  constructor(private userService: UserService, private fb: FormBuilder,
+     private ticketService: TicketService,private notificationService : NotificationService) { }
 
   ngOnInit(): void {
-    this.loadUserDetails();
     this.usernameForm = this.fb.group({
       username: ['', Validators.required]
     });
-
+    
     this.passwordForm = this.fb.group({
       oldPassword: ['', Validators.required],
       newPassword: ['', [Validators.required, Validators.minLength(6)]]
     });
+    this.loadUserDetails();
   }
   CancelEdit(){
     this.usernameForm.patchValue({ username: this.originalName });
     this.isEditingUsername = false;
   }
+
   loadUserDetails() {
     this.userService.getUserDetails().subscribe((res: ApiResponse) => {
       this.user = res.data;
+      console.log(this.user)
       this.usernameForm.get('username')?.setValue(this.user.username);
       this.originalName = this.user.username;
     });
@@ -79,9 +76,9 @@ export class Profile implements OnInit {
       error: () => alert('Failed to change password.')
     });
   }
-  
-    cancelPasswordChange() {
-      this.isChangingPassword = false;
-      this.passwordForm.reset();
-    }
+
+  cancelPasswordChange() {
+    this.isChangingPassword = false;
+    this.passwordForm.reset();
+  }
 }

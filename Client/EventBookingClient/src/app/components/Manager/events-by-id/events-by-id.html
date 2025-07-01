@@ -92,7 +92,7 @@
       </div>
     }
 
-  @if (eventForm) {
+  <!-- @if (eventForm) {
     <form [formGroup]="eventForm" class="grid md:grid-cols-2 gap-6">
       <div>
         <label class="block text-sm font-medium text-gray-700">Title</label>
@@ -140,7 +140,72 @@
         <input type="text" formControlName="location" class="form_input w-full" [readonly]="true" />
       </div>
     </form>
-  }
+  } -->
+  @if (eventForm) {
+  <form [formGroup]="eventForm" class="grid md:grid-cols-2 gap-6">
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Title</label>
+      <input type="text" formControlName="title" class="form_input w-full" [readonly]="!isEditingEvent()" />
+      @if (eventForm.get('title')?.invalid && eventForm.get('title')?.touched) {
+        <p class="text-red-500 text-sm">Title is required.</p>
+      }
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Description</label>
+      <input type="text" formControlName="description" class="form_input w-full" [readonly]="!isEditingEvent()" />
+      @if (eventForm.get('description')?.invalid && eventForm.get('description')?.touched) {
+        <p class="text-red-500 text-sm">Description is required.</p>
+      }
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+      @if (!isEditingEvent()) {
+        <input type="text" formControlName="eventStatus" class="form_input w-full" readonly />
+      } @else {
+        <select formControlName="eventStatus" class="form_select w-full">
+          <option value="" disabled>Select status</option>
+          <option value="Active">Active</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Completed">Completed</option>
+        </select>
+        @if (eventForm.get('eventStatus')?.invalid && eventForm.get('eventStatus')?.touched) {
+          <p class="text-red-500 text-sm">Status is required.</p>
+        }
+      }
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+      <input type="text" formControlName="eventType" class="form_input w-full" [readonly]="true" />
+      @if (eventForm.get('eventType')?.invalid && eventForm.get('eventType')?.touched) {
+        <p class="text-red-500 text-sm">Type is required.</p>
+      }
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Date</label>
+      <input type="datetime" formControlName="eventDate" class="form_input w-full" [readonly]="true" />
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+      <input type="text" formControlName="category" class="form_input w-full" readonly />
+      @if (eventForm.get('category')?.invalid && eventForm.get('category')?.touched) {
+        <p class="text-red-500 text-sm">Category is required.</p>
+      }
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+      <input type="text" formControlName="location" class="form_input w-full" readonly />
+      @if (eventForm.get('location')?.invalid && eventForm.get('location')?.touched) {
+        <p class="text-red-500 text-sm">City is required.</p>
+      }
+    </div>
+  </form>
+}
 
   <div>
     <div class="flex justify-between items-center mt-8 mb-4">
@@ -190,7 +255,7 @@
       <p class="text-gray-500 italic mt-4">No ticket types added yet.</p>
     }
 
-    @if (isAddingTicketType()) {
+    <!-- @if (isAddingTicketType()) {
       <div class="mt-6 p-6 bg-gray-50 border rounded-xl">
         <form [formGroup]="ticketTypeForm" class="grid md:grid-cols-2 gap-6">
           <div>
@@ -229,6 +294,61 @@
           <button class="outline_btn" (click)="cancelEditTicketType()">Cancel</button>
         </div>
       </div>
-    }
+    } -->
+    @if (isAddingTicketType()) {
+  <div class="mt-6 p-6 bg-gray-50 border rounded-xl">
+    <form [formGroup]="ticketTypeForm" class="grid md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Type</label>
+        <select formControlName="typeName" class="form_select w-full">
+          <option value="">Select</option>
+          <option [value]="0">Regular</option>
+          <option [value]="1">VIP</option>
+          <option [value]="2">Early Bird</option>
+        </select>
+        @if (ticketTypeForm.get('typeName')?.invalid && ticketTypeForm.get('typeName')?.touched) {
+          <p class="text-red-500 text-sm">Type is required.</p>
+        }
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Price</label>
+        <input
+          type="number"
+          formControlName="price"
+          class="form_input w-full"
+          [readonly]="ticketTypeForm.get('id')?.value != null"
+        />
+        @if (ticketTypeForm.get('price')?.invalid && ticketTypeForm.get('price')?.touched) {
+          <p class="text-red-500 text-sm">Price must be at least ₹1.</p>
+        }
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Quantity</label>
+        <input type="number" formControlName="totalQuantity" class="form_input w-full" />
+        @if (ticketTypeForm.get('totalQuantity')?.invalid && ticketTypeForm.get('totalQuantity')?.touched) {
+          <p class="text-red-500 text-sm">Quantity must be at least 1.</p>
+        }
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-gray-700">Description</label>
+        <input type="text" formControlName="description" class="form_input w-full" />
+        @if (ticketTypeForm.get('description')?.invalid && ticketTypeForm.get('description')?.touched) {
+          <p class="text-red-500 text-sm">Description is requird</p>
+        }
+      </div>
+    </form>
+
+    <div class="flex justify-end gap-2 mt-6">
+      <button class="black_btn disabled:cursor-not-allowed" (click)="submitTicketType()" [disabled]="ticketTypeForm.invalid">
+        {{ ticketTypeForm.value.id ? 'Update' : 'Add' }} Ticket Type
+      </button>
+      <button class="outline_btn" (click)="cancelEditTicketType()">Cancel</button>
+    </div>
+  </div>
+}
+
   </div>
 </section>

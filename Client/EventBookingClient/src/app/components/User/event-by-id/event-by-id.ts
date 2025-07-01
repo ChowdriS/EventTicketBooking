@@ -52,6 +52,12 @@ export class EventById implements OnInit {
       }
     });
   }
+  getTotalBooked(event  : AppEvent){
+    return event.ticketTypes.reduce((sum, ticket) => sum + (ticket.bookedQuantity), 0);
+  }
+  getTotalAvailable(event  : AppEvent){
+    return event.ticketTypes.reduce((sum, ticket) => sum + (ticket.totalQuantity), 0);
+  }
   getSimilarEvents() {
     const categoryLabel = this.event()!.category;
     const categoryValue = (EventCategory[categoryLabel] as unknown) as number;
@@ -160,12 +166,22 @@ export class EventById implements OnInit {
   }
 
   submit() {
-    if (this.form.invalid) return;
+    if (this.form.invalid){
+      // alert("Enter all required details!");
+      return;
+    }
 
     const evt = this.event();
     if (!evt) return;
 
     const isSeatable = this.event()?.eventType.toString() == this.eventTypeToString(0)
+
+    if(isSeatable){
+      let seats = this.form.value.seatNumbers;
+      if(seats.length != this.form.value.quantity){
+        alert("select for all required quantity!")
+      }
+    }
 
     const payload = {
       EventId: evt.id,

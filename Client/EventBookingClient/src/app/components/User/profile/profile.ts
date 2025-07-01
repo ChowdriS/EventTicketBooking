@@ -5,12 +5,14 @@ import { UserService } from '../../../services/User/user-service';
 import { User } from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
 import { TicketService } from '../../../services/Ticket/ticket.service';
+import { NotificationService } from '../../../services/Notification/notification-service';
+import { UserDetails } from '../../user-details/user-details';
 
 @Component({
   selector: 'app-profile',
-  imports: [FormsModule, CommonModule, ReactiveFormsModule],
+  imports: [FormsModule, CommonModule, ReactiveFormsModule, UserDetails],
   templateUrl: './profile.html',
-  styleUrl: './profile.css'
+  standalone: true
 })
 export class Profile implements OnInit {
   user!: User;
@@ -22,8 +24,8 @@ export class Profile implements OnInit {
   currentPage = 1;
   pageSize = 5;
   totalPages = 1;
-
-  constructor(private userService: UserService, private fb: FormBuilder, private ticketService: TicketService) { }
+  originalName:string = '';
+  constructor(private userService: UserService, private fb: FormBuilder, private ticketService: TicketService,private notificationService : NotificationService) { }
 
   ngOnInit(): void {
     this.loadUserDetails();
@@ -37,6 +39,11 @@ export class Profile implements OnInit {
       newPassword: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
+  CancelEdit(){
+    this.usernameForm.patchValue({ username: this.originalName });
+    this.isEditingUsername = false;
+  }
+  
   loadTickets() {
     this.ticketService.getMyTickets(this.currentPage, this.pageSize).subscribe({
       next: (res) => {
@@ -92,6 +99,7 @@ export class Profile implements OnInit {
     this.userService.getUserDetails().subscribe((res: ApiResponse) => {
       this.user = res.data;
       this.usernameForm.get('username')?.setValue(this.user.username);
+      this.originalName = this.user.username;
     });
   }
 
@@ -104,6 +112,8 @@ export class Profile implements OnInit {
       next: (res: ApiResponse) => {
         this.user = res.data;
         this.isEditingUsername = false;
+        this.notificationService.success("Username Changed");
+        this.loadUserDetails();
       },
       error: () => alert('Failed to update username.')
     });
