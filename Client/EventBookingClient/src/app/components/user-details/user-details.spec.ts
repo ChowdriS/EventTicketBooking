@@ -133,7 +133,7 @@ describe('UserDetails Component', () => {
     expect(component.isEditingUsername).toBeFalse();
   });
 
-  it('should change password successfully', fakeAsync(() => {
+    it('should change password successfully', fakeAsync(() => {
     component.passwordForm.setValue({
       oldPassword: 'oldpass',
       newPassword: 'newpass123'
@@ -149,7 +149,6 @@ describe('UserDetails Component', () => {
     };
 
     mockUserService.changePassword.and.returnValue(of(response));
-    spyOn(window, 'alert');
 
     component.changePassword();
     tick();
@@ -158,13 +157,12 @@ describe('UserDetails Component', () => {
       oldPassword: 'oldpass',
       newPassword: 'newpass123'
     });
-    expect(window.alert).toHaveBeenCalledWith('Password changed successfully!');
+    expect(mockNotificationService.success).toHaveBeenCalledWith('Password changed successfully!');
     expect(component.isChangingPassword).toBeFalse();
     expect(component.passwordForm.value).toEqual({ oldPassword: null, newPassword: null });
   }));
 
   it('should alert when old and new passwords match', () => {
-    spyOn(window, 'alert');
     component.passwordForm.setValue({
       oldPassword: 'samepass',
       newPassword: 'samepass'
@@ -172,12 +170,11 @@ describe('UserDetails Component', () => {
 
     component.changePassword();
 
-    expect(window.alert).toHaveBeenCalledWith('The old and new passwords are same. Try stronger passwords!');
+    expect(mockNotificationService.error).toHaveBeenCalledWith('The old and new passwords are same. Try stronger passwords!');
     expect(mockUserService.changePassword).not.toHaveBeenCalled();
   });
 
   it('should handle password change error', fakeAsync(() => {
-    spyOn(window, 'alert');
     component.passwordForm.setValue({
       oldPassword: 'oldpass',
       newPassword: 'newpass123'
@@ -188,8 +185,22 @@ describe('UserDetails Component', () => {
     component.changePassword();
     tick();
 
-    expect(window.alert).toHaveBeenCalledWith('Failed to change password.');
+    expect(mockNotificationService.error).toHaveBeenCalledWith('Failed to change password.');
   }));
+
+  it('should handle username update error', fakeAsync(() => {
+    component.user = mockUser;
+    component.usernameForm.setValue({ username: 'newName' });
+    component.isEditingUsername = true;
+
+    mockUserService.updateUsername.and.returnValue(throwError(() => new Error('update error')));
+    
+    component.saveUsername();
+    tick();
+
+    expect(mockNotificationService.error).toHaveBeenCalledWith('Failed to update username.');
+  }));
+
 
   it('should cancel password change', () => {
     component.passwordForm.setValue({
@@ -204,17 +215,4 @@ describe('UserDetails Component', () => {
     expect(component.passwordForm.value).toEqual({ oldPassword: null, newPassword: null });
   });
 
-  it('should handle username update error', fakeAsync(() => {
-    spyOn(window, 'alert');
-    component.user = mockUser;
-    component.usernameForm.setValue({ username: 'newName' });
-    component.isEditingUsername = true;
-
-    mockUserService.updateUsername.and.returnValue(throwError(() => new Error('update error')));
-    
-    component.saveUsername();
-    tick();
-
-    expect(window.alert).toHaveBeenCalledWith('Failed to update username.');
-  }));
 });

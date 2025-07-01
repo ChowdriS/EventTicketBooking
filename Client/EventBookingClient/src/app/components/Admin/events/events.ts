@@ -87,7 +87,7 @@ export class Events {
   }
   GetEventById(event: AppEvent) {
     if (this.isCancelled(event)) {
-      this.notify.success('The Event is Cancelled! Try a different Event!');
+      this.notify.success('The Event already deleted!');
     } else {
       this.router.navigate([this.router.url, event.id]);
     }

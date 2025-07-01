@@ -27,10 +27,16 @@ export class Register implements OnInit{
 
     if (this.authService.getToken()) {
       let token = this.authService.getToken();
-      console.log(token);
+      // console.log(token);
       let role = Getrole(token);
-      if(role === 'User')
+      // console.log(role)
+      if(role == 'User')
         this.router.navigate(['/user']);
+      if(role == 'Manager')
+        this.router.navigate(['/manager']);
+      if(role == 'Admin')
+        this.router.navigate(['/admin']);
+
     }
   }
 

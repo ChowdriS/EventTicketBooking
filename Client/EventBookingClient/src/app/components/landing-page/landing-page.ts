@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Auth } from '../../services/Auth/auth';
 import { Getrole } from '../../misc/Token';
 import { NgOptimizedImage } from '@angular/common';
+import { Slider } from "../slider/slider";
 
 @Component({
   selector: 'app-landing-page',

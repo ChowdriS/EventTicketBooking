@@ -6,7 +6,7 @@
       <button class=" black_btn" [routerLink]="[this.router.url, 'events']">View All Events</button>
       @if(role == 'Manager'){
           <button class=" outline_btn" [routerLink]="[this.router.url,'events','add']">Add Event</button>
-        }
+      }
     </div>
   </div>
   @if (topEvent(); as event) {
@@ -17,6 +17,9 @@
           <h3 class="text-4xl font-bold orange_gradient">{{ event.title }}</h3>
           @if(isCancelled(event)){
           <h3 class="text-xl text-red-500">( Cancelled )</h3>
+          }
+          @else {
+            <h3 class=" text-xl logo_text capitalize text-red-800 mt-2 "> (Trending Event)</h3>
           }
         </div>
         <p class="text-gray-600 mt-2">{{ event.description }}</p>

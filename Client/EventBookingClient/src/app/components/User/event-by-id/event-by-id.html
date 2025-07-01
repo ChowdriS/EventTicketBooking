@@ -47,7 +47,12 @@
   </div>
  <form *ngIf="form" [formGroup]="form" (ngSubmit)="submit()" class="grid md:grid-cols-2 gap-6">
   <div class="md:col-span-2">
-    <label class="block text-sm font-medium text-gray-700">Ticket Type</label>
+    <div class=" flex-start gap-2">
+      <label class="block text-sm font-medium text-gray-700">Ticket Type</label>
+      @if(selectedTicketType()){
+        <p class=" text-red-400">Available Seats : {{availableToBook}}</p>
+      }
+    </div>
     <select class="form_select w-full mt-1" formControlName="ticketTypeId">
       <option [ngValue]="null">-- Select Ticket Type --</option>
       @for (type of event()?.ticketTypes; track type.id) {

@@ -25,7 +25,7 @@ export class Profile implements OnInit {
   pageSize = 5;
   totalPages = 1;
   originalName:string = '';
-  constructor(private userService: UserService, private fb: FormBuilder, private ticketService: TicketService,private notificationService : NotificationService) { }
+  constructor(private userService: UserService, private fb: FormBuilder, private ticketService: TicketService) { }
 
   ngOnInit(): void {
     this.loadUserDetails();
@@ -52,7 +52,7 @@ export class Profile implements OnInit {
         this.totalPages = data.totalPages;
         this.currentPage = data.pageNumber;
       },
-      error: () => this.notify.error('Failed to load tickets')
+      error: () => alert('Failed to load tickets')
     });
   }
 
@@ -112,7 +112,6 @@ export class Profile implements OnInit {
       next: (res: ApiResponse) => {
         this.user = res.data;
         this.isEditingUsername = false;
-        this.notificationService.success("Username Changed");
         this.loadUserDetails();
       },
       error: () => alert('Failed to update username.')

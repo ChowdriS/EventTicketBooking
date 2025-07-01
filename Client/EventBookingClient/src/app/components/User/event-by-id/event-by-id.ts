@@ -24,6 +24,7 @@ export class EventById implements OnInit {
   event = signal<AppEvent | null>(null);
   eventId!: string;
   form!: FormGroup;
+  availableToBook!: Number;
   selectedTicketType = signal<EventResponseTicketType | undefined>(undefined);
   availableSeats = signal<number[]>([]);
   bookedSeatNumbers = signal<number[]>([]);
@@ -86,7 +87,7 @@ export class EventById implements OnInit {
         const evt = new AppEvent(res.data);
         // console.log(evt);
         this.event.set(evt);
-        // console.log(this.event());
+        console.log(this.event());
         this.imageid.set(evt.images ?? null);
 
         if ((this.imageid()?.length ?? 0) > 1) {
@@ -109,12 +110,14 @@ export class EventById implements OnInit {
           this.selectedTicketType.set(ticketType);
           this.form.get('seatNumbers')?.setValue([]);
           this.form.get('quantity')?.setValue(1);
+          this.availableToBook = (ticketType?.totalQuantity ?? 0) - (ticketType?.bookedQuantity ?? 0);
         });
+
         this.form.get('ticketTypeId')?.setValue(null);
         this.getSimilarEvents();
       },
       error: (err: any) => {
-        this.notify.error(err.message);
+        this.notify.error(err.error.errors.message);
       }
     });
   }
@@ -185,7 +188,6 @@ export class EventById implements OnInit {
         return;
       }
     }
-
     const payload = {
       EventId: evt.id,
       TicketTypeId: this.form.value.ticketTypeId,
@@ -199,7 +201,7 @@ export class EventById implements OnInit {
     // console.log(payload)
     this.ticketService.bookTicket(payload).subscribe({
       next: () => this.router.navigate(['/user']),
-      error: () => this.notify.error('Booking failed. Try again.'),
+      error: (err:any) => {console.log(err);this.notify.error(err.error.errors.message)},
     });
   }
 

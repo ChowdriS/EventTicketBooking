@@ -21,9 +21,6 @@ export class TopEvent implements OnInit {
   
   ngOnInit() {
     this.role = Getrole(this.auth.getToken());
-    // this.fetchTopEvent();
-    // this.GetAllEventImages();
-    // this.startSlider();
     // console.log("inside top event");
   }
   routeToEvent(img:any){

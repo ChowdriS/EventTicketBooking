@@ -93,7 +93,7 @@ export class FrontPage {
           this.notify.success('User deleted successfully!');
           this.fetchUsers();
         },
-        error: () => alert('Failed to delete user'),
+        error: () => this.notify.error('Failed to delete user'),
       });
     }
   }
@@ -104,7 +104,7 @@ export class FrontPage {
         const parsedEvents = rawItem.map((e: any) => new AppEvent(e));
         this.topEvent.set(parsedEvents[0]);
       },
-      error: () => alert("Failed to load events.")
+      error: () => this.notify.error("Failed to load events.")
     });
   }
   eventStatusToString(status: number): string {
