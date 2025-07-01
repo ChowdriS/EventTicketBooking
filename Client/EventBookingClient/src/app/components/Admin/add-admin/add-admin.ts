@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Getrole } from '../../../misc/Token';
 import { ApiResponse } from '../../../models/api-response.model';
 import { CommonModule } from '@angular/common';
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-add-admin',
@@ -15,7 +16,7 @@ import { CommonModule } from '@angular/common';
 export class AddAdmin implements OnInit{
   registerForm! : FormGroup;
 
-  constructor(private fb : FormBuilder, private authService: Auth, private router: Router) {}
+  constructor(private fb : FormBuilder, private authService: Auth, private router: Router, private notify: NotificationService) {}
   ngOnInit(): void {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
@@ -34,14 +35,14 @@ export class AddAdmin implements OnInit{
     this.authService.addAdmin(this.registerForm.value).subscribe({
       next: (res: ApiResponse) => {
         if (res.success) {
-          alert('Admin added successfully!');
+          this.notify.success('Admin added successfully!');
         } else {
-          alert(res.message);
+          this.notify.error(res.message);
         }
       },
       error: (error:any) => {
         const errorMessage = error?.error?.errors?.message || 'An unknown error occurred.';      
-        alert(errorMessage);
+        this.notify.error(errorMessage);
       }
     });
 

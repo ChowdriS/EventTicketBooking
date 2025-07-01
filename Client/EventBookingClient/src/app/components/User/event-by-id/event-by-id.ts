@@ -11,6 +11,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { signal } from '@angular/core';
 import { App } from '../../../app';
 import { SimilarEvents } from "../../similar-events/similar-events";
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-event-by-id',
@@ -39,7 +40,8 @@ export class EventById implements OnInit {
     private eventService: EventService,
     private ticketService: TicketService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+     private notify: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -112,7 +114,7 @@ export class EventById implements OnInit {
         this.getSimilarEvents();
       },
       error: (err: any) => {
-        alert(err.message);
+        this.notify.error(err.message);
       }
     });
   }
@@ -179,7 +181,8 @@ export class EventById implements OnInit {
     if(isSeatable){
       let seats = this.form.value.seatNumbers;
       if(seats.length != this.form.value.quantity){
-        alert("select for all required quantity!")
+        this.notify.info("select for all required quantity!")
+        return;
       }
     }
 
@@ -196,7 +199,7 @@ export class EventById implements OnInit {
     // console.log(payload)
     this.ticketService.bookTicket(payload).subscribe({
       next: () => this.router.navigate(['/user']),
-      error: () => alert('Booking failed. Try again.'),
+      error: () => this.notify.error('Booking failed. Try again.'),
     });
   }
 

@@ -5,6 +5,7 @@ import { User } from '../../../models/user.model';
 import { ApiResponse } from '../../../models/api-response.model';
 import { SignalRService } from '../../../services/Notification/signalr-service';
 import { Navbar } from "../../navbar/navbar";
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +15,7 @@ import { Navbar } from "../../navbar/navbar";
 })
 export class Home {
   user = signal<User | null>(null);
-  constructor(public router : Router,private userService:UserService,private signalrService : SignalRService) {}
+  constructor(public router : Router,private userService:UserService,private signalrService : SignalRService,  private notify: NotificationService) {}
 
   logout() {
     localStorage.removeItem('token');
@@ -31,7 +32,7 @@ export class Home {
         this.user.set(res.data);
       },
       error: (err: any) => {
-        alert("Failed to fetch your Data");
+        this.notify.error("Failed to fetch your Data");
       }
     });
   }

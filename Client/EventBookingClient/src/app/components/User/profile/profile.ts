@@ -52,7 +52,7 @@ export class Profile implements OnInit {
         this.totalPages = data.totalPages;
         this.currentPage = data.pageNumber;
       },
-      error: () => alert('Failed to load tickets')
+      error: () => this.notify.error('Failed to load tickets')
     });
   }
 

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiResponse } from '../../../models/api-response.model';
 import { Getrole } from '../../../misc/Token';
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +15,7 @@ import { Getrole } from '../../../misc/Token';
 export class Register implements OnInit{
   registerForm! : FormGroup;
 
-  constructor(private fb : FormBuilder, private authService: Auth, private router: Router) {}
+  constructor(private fb : FormBuilder, private authService: Auth, private router: Router, private notify: NotificationService) {}
   ngOnInit(): void {
     this.registerForm = this.fb.group({
       role: ['user', Validators.required],
@@ -42,15 +43,15 @@ export class Register implements OnInit{
     this.authService.register(this.registerForm.value).subscribe({
       next: (res: ApiResponse) => {
         if (res.success) {
-          alert('Registration successful!');
+          this.notify.success('Registration successful!');
           this.router.navigate(['/login']);
         } else {
-          alert(res.message);
+          this.notify.error(res.message);
         }
       },
       error: (error) => {
         const errorMessage = error?.error?.errors?.message || 'An unknown error occurred.';      
-        alert(errorMessage);
+        this.notify.error(errorMessage);
       }
     });
 

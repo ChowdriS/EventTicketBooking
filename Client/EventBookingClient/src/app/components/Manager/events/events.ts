@@ -6,6 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import {EventStatus, EventTypeEnum, TicketTypeEnum} from '../../../models/enum';
 import { FormsModule } from '@angular/forms';
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-events',
@@ -20,7 +21,7 @@ export class Events {
   totalPages = signal(1);
   pageSize = 4;
 
-  constructor(private eventsService: EventService,public router: Router) {}
+  constructor(private eventsService: EventService,public router: Router, private notify: NotificationService) {}
 
   ngOnInit() {
     this.loadEvents();
@@ -44,12 +45,12 @@ export class Events {
         console.log(this.events());
         this.totalPages.set(res.data?.totalPages || 1);
       },
-      error: () => alert("Failed to load events.")
+      error: () => this.notify.error("Failed to load events.")
     });
   }
   GetEventById(event:AppEvent){
     if(this.isCancelled(event)){
-      alert("The Event is Cancelled! Try different Event!");
+      this.notify.error("The Event is Cancelled! Try different Event!");
     }
     else{
       this.router.navigate([this.router.url,event.id]);

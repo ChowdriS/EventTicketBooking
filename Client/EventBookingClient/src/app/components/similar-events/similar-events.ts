@@ -3,6 +3,7 @@ import { AppEvent } from '../../models/event.model';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Route, Router } from '@angular/router';
 import { TicketTypeEnum } from '../../models/enum';
+import { NotificationService } from '../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-similar-events',
@@ -12,10 +13,10 @@ import { TicketTypeEnum } from '../../models/enum';
 })
 export class SimilarEvents{
   @Input() data! : AppEvent[];
-  constructor(private router : Router){}
+  constructor(private router : Router,  private notify: NotificationService){}
   GetEventById(event: AppEvent) {
     if (this.isCancelled(event)) {
-      alert('The Event is Cancelled! Try a different Event!');
+      this.notify.info('The Event is Cancelled! Try a different Event!');
     } else {
       const role = this.router.url.split('/')[1]; 
       const url = `/${role}/events/${event.id}`;

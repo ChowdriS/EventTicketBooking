@@ -7,6 +7,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import {EventCategory, EventStatus, EventTypeEnum, TicketTypeEnum} from '../../../models/enum';
 import { FormsModule } from '@angular/forms';
 import { EventManager } from '@angular/platform-browser';
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-events',
@@ -27,7 +28,7 @@ export class Events {
   selectedCategory: number = -111;
   cityOptions: { id: string; label: string }[] = [];
 
-  constructor(private eventsService: EventService, private router: Router) {}
+  constructor(private eventsService: EventService, private router: Router, private notify: NotificationService) {}
 
   ngOnInit() {
     this.loadEvents();
@@ -75,7 +76,7 @@ export class Events {
           this.filterDate = '';
           // console.log(this.events());
         },
-        error: () => alert('Failed to load events.')
+        error: () => this.notify.error('Failed to load events.')
       });
   }
   getTotalBooked(event  : AppEvent){
@@ -86,7 +87,7 @@ export class Events {
   }
   GetEventById(event: AppEvent) {
     if (this.isCancelled(event)) {
-      alert('The Event is Cancelled! Try a different Event!');
+      this.notify.success('The Event is Cancelled! Try a different Event!');
     } else {
       this.router.navigate([this.router.url, event.id]);
     }

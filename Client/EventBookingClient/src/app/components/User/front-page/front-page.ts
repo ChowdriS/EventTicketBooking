@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { EventStatus, EventTypeEnum, TicketTypeEnum } from '../../../models/enum';
 import { Slider } from "../../slider/slider";
 import { TopEvent } from "../../top-event/top-event";
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-front-page',
@@ -19,7 +20,7 @@ export class FrontPage {
   images = signal<any | null>(null);
   currentIndex = signal<number>(0);
   intervalId: any;
-  constructor(private eventsService: EventService,public router : Router) {}
+  constructor(private eventsService: EventService,public router : Router,  private notify: NotificationService) {}
   
   ngOnInit() {
     this.fetchTopEvent();
@@ -37,7 +38,7 @@ export class FrontPage {
   }
   GetEventById(event: AppEvent) {
     if (this.isCancelled(event)) {
-      alert('The Event is Cancelled! Try a different Event!');
+      this.notify.info('The Event is Cancelled! Try a different Event!');
     } else {
       this.router.navigate([this.router.url,'events', event.id]);
     }
@@ -78,7 +79,7 @@ export class FrontPage {
         this.topEvent.set(parsedEvents[0]);
         console.log(this.topEvent())
       },
-      error: () => alert("Failed to load events.")
+      error: () => this.notify.error("Failed to load events.")
     });
   }
   eventStatusToString(status: number): string {

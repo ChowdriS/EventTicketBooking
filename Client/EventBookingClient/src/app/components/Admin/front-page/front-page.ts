@@ -10,6 +10,7 @@ import { Getrole } from '../../../misc/Token';
 import { Auth } from '../../../services/Auth/auth';
 import { Slider } from "../../slider/slider";
 import { TopEvent } from "../../top-event/top-event";
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-front-page',
@@ -24,7 +25,7 @@ export class FrontPage {
   images = signal<any | null>(null);
   currentIndex = signal<number>(0);
   intervalId: any;
-  constructor(private eventsService: EventService,public router : Router, private userService : UserService) {}
+  constructor(private eventsService: EventService,public router : Router, private userService : UserService, private notify: NotificationService) {}
   
   ngOnInit() {
     this.fetchTopEvent();
@@ -37,7 +38,7 @@ export class FrontPage {
       next: (res) => {
         this.users.set(res.data.$values);
       },
-      error: () => alert('Failed to fetch users'),
+      error: () => this.notify.error('Failed to fetch users'),
     });
   }
     getCurrentIndex(){
@@ -51,7 +52,7 @@ export class FrontPage {
   }
   GetEventById(event: AppEvent) {
     if (this.isCancelled(event)) {
-      alert('The Event is Cancelled! Try a different Event!');
+      this.notify.success('The Event is Cancelled! Try a different Event!');
     } else {
       this.router.navigate([this.router.url,'events', event.id]);
     }
@@ -89,7 +90,7 @@ export class FrontPage {
     if (confirm(`Are you sure you want to delete ${user.email}?`)) {
       this.userService.deleteUser(user.id).subscribe({
         next: () => {
-          alert('User deleted successfully!');
+          this.notify.success('User deleted successfully!');
           this.fetchUsers();
         },
         error: () => alert('Failed to delete user'),

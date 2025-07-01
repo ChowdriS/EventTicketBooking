@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ApiResponse } from '../../../models/api-response.model';
 import { EventCategory } from '../../../models/enum';
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-add-event',
@@ -23,7 +24,7 @@ export class AddEvent implements OnInit {
   ticketTypes = signal<any[]>([]);
   isAddingTicketType = signal(false);
 
-  constructor(private fb: FormBuilder, private eventService: EventService, public router: Router) {}
+  constructor(private fb: FormBuilder, private eventService: EventService, public router: Router, private notify: NotificationService) {}
 
   ngOnInit(): void {
     this.initForms();
@@ -108,7 +109,7 @@ export class AddEvent implements OnInit {
 
   submitEvent() {
     if (this.eventForm.invalid || this.ticketTypes().length === 0) {
-      alert('Please complete the form and add at least one ticket type.');
+      this.notify.info('Please complete the form and add at least one ticket type.');
       return;
     }
     const payload = {
@@ -148,11 +149,11 @@ export class AddEvent implements OnInit {
     console.log(formData)
     this.eventService.addEvent(formData).subscribe({
       next: (res: any) => {
-        alert('Event created successfully!');
+        this.notify.success('Event created successfully!');
         this.router.navigate([`/manager/events/${res.data.id}`]);
         // this.router.navigate([this.router.url, res.data.id]);
       },
-      error: () => alert('Failed to create event'),
+      error: () => this.notify.error('Failed to create event'),
     });
   }
 }

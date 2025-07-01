@@ -4,6 +4,7 @@ import { UserService } from '../../../services/User/user-service';
 import { ApiResponse } from '../../../models/api-response.model';
 import { User } from '../../../models/user.model';
 import { Navbar } from "../../navbar/navbar";
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,7 @@ import { Navbar } from "../../navbar/navbar";
 export class Home implements OnInit {
   user = signal<User | null>(null);
 
-  constructor(public router: Router, private userService: UserService) {}
+  constructor(public router: Router, private userService: UserService, private notify: NotificationService) {}
 
   logout() {
     localStorage.removeItem('token');
@@ -32,7 +33,7 @@ export class Home implements OnInit {
         this.user.set(res.data);
       },
       error: (err: any) => {
-        alert("Failed to fetch your Data");
+        this.notify.error("Failed to fetch your Data");
       }
     });
   }

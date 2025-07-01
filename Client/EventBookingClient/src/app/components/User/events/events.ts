@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import { EventCategory, EventStatus, EventTypeEnum, TicketTypeEnum } from '../../../models/enum';
 import { FormsModule } from '@angular/forms';
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-events',
@@ -26,7 +27,7 @@ export class Events implements OnInit{
   selectedCategory: number = -111;
   cityOptions: { id: string; label: string }[] = [];
 
-  constructor(private eventsService: EventService, private router: Router) {}
+  constructor(private eventsService: EventService, private router: Router,  private notify: NotificationService) {}
   ngOnInit() {
     this.loadEvents();
     this.loadCities();
@@ -73,7 +74,7 @@ export class Events implements OnInit{
           this.filterDate = '';
           // console.log(this.events());
         },
-        error: () => alert('Failed to load events.')
+        error: () => this.notify.error('Failed to load events.')
       });
   }
   getTotalBooked(event  : AppEvent){
@@ -84,10 +85,10 @@ export class Events implements OnInit{
   }
   GetEventById(event: AppEvent) {
     if (this.isCancelled(event)) {
-      alert('The Event is Cancelled! Try a different Event!');
+      this.notify.info('The Event is Cancelled! Try a different Event!');
     } 
     else if(this.getTotalBooked(event) >= this.getTotalAvailable(event)){
-      alert("The Event is housefull! Try a different Event!")
+      this.notify.info("The Event is housefull! Try a different Event!")
     }
     else {
       this.router.navigate([this.router.url, event.id]);

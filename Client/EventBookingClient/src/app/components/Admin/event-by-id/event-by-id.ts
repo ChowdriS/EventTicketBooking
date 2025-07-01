@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AppEvent } from '../../../models/event.model';
 import { ApiResponse } from '../../../models/api-response.model';
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-event-by-id',
@@ -30,7 +31,8 @@ export class EventById implements OnInit {
     private fb: FormBuilder,
     private eventService: EventService,
     private route: ActivatedRoute,
-    public router : Router
+    public router : Router,
+    private notify: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -81,7 +83,7 @@ export class EventById implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        alert('Failed to load event details');
+        this.notify.error('Failed to load event details');
         this.loading.set(false);
       }
     });
@@ -90,11 +92,11 @@ export class EventById implements OnInit {
   deleteEvent(id:string) {
     this.eventService.deleteEvent(id).subscribe({
       next:(res:ApiResponse)=>{
-        alert("Successfully Deleted!");
+        this.notify.success("Successfully Deleted!");
         this.router.navigate(["admin/events"]);
       },
       error:(err:ApiResponse)=>{
-        alert(err.message);
+        this.notify.success(err.message);
       }
     })
   }

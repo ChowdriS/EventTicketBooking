@@ -49,12 +49,12 @@ export class Login implements OnInit {
             this.roleBasedRoute();
             this.notify.success("Login Success");
           } else {
-            alert(res.message || 'Login failed.');
+            this.notify.error(res.message || 'Login failed.');
           }
         },
         error: (error) => {
           const errorMessage = error?.error?.errors?.message || 'An unknown error occurred.';      
-          alert(errorMessage);
+          this.notify.error(errorMessage);
         }
       });
 }

@@ -24,7 +24,7 @@ export class UserDetails implements OnInit {
   constructor(
     private userService: UserService,
     private fb: FormBuilder,
-    private notificationService: NotificationService
+    private notify: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -66,11 +66,11 @@ export class UserDetails implements OnInit {
     this.userService.updateUsername({ username: newUsername }).subscribe({
       next: (res: ApiResponse<User>) => {
         this.user = res.data || this.user;
-        this.notificationService.success('Username Changed');
+        this.notify.success('Username Changed');
         this.isEditingUsername = false;
         this.originalName = newUsername;
       },
-      error: () => alert('Failed to update username.')
+      error: () => this.notify.error('Failed to update username.')
     });
   }
 
@@ -79,16 +79,16 @@ export class UserDetails implements OnInit {
     
     const { oldPassword, newPassword } = this.passwordForm.value;
     if (oldPassword === newPassword) {
-      alert('The old and new passwords are same. Try stronger passwords!');
+      this.notify.error('The old and new passwords are same. Try stronger passwords!');
       return;
     }
 
     this.userService.changePassword({ oldPassword, newPassword }).subscribe({
       next: () => {
-        alert('Password changed successfully!');
+        this.notify.success('Password changed successfully!');
         this.cancelPasswordChange();
       },
-      error: () => alert('Failed to change password.')
+      error: () => this.notify.error('Failed to change password.')
     });
   }
 

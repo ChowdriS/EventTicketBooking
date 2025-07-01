@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { EventStatus, EventTypeEnum, TicketTypeEnum } from '../../../models/enum';
 import { Slider } from "../../slider/slider";
 import { TopEvent } from "../../top-event/top-event";
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-front-page',
@@ -19,7 +20,7 @@ export class FrontPage {
   images = signal<any | null>(null);
   currentIndex = signal<number>(0);
   intervalId: any;
-  constructor(private eventsService: EventService,public router : Router) {}
+  constructor(private eventsService: EventService,public router : Router ,private notify: NotificationService) {}
   
   ngOnInit() {
     this.fetchTopEvent();
@@ -67,7 +68,7 @@ export class FrontPage {
         const parsedEvents = rawItem.map((e: any) => new AppEvent(e));
         this.topEvent.set(parsedEvents[0]);
       },
-      error: () => alert("Failed to load events.")
+      error: () => this.notify.error("Failed to load events.")
     });
   }
   eventStatusToString(status: number): string {

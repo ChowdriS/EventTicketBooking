@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { AppEvent } from '../../../models/event.model';
 import { EventStatus, EventTypeEnum } from '../../../models/enum';
 import { ApiResponse } from '../../../models/api-response.model';
+import { NotificationService } from '../../../services/Notification/notification-service';
 
 @Component({
   selector: 'app-events-by-id',
@@ -35,7 +36,8 @@ export class EventsById implements OnInit {
     private eventService: EventService,
     private ticketTypeService: TicketTypeService,
     private route: ActivatedRoute,
-    public router : Router
+    public router : Router,
+     private notify: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -76,7 +78,7 @@ export class EventsById implements OnInit {
     // debugger;
     this.eventService.deleteEventImages(image).subscribe({
       next:()=>{
-        alert("Image deleted!");
+        this.notify.info("Image deleted!");
         this.loadEventData();
         this.isImageEdit.set(!this.isImageEdit());
       },
@@ -100,7 +102,7 @@ export class EventsById implements OnInit {
         this.loading.set(false);
       },
       error: () => {
-        alert('Failed to load event details');
+        this.notify.error('Failed to load event details');
         this.loading.set(false);
       }
     });
@@ -141,12 +143,12 @@ export class EventsById implements OnInit {
     this.eventService.updateEvent(this.eventId, payload).subscribe({
         next: (res:ApiResponse) => {
           console.log(res);
-          alert('Event updated successfully');
+          this.notify.success('Event updated successfully');
           this.isEditingEvent.set(false);
           this.loadEventData();
         },
         error: () => {
-          alert('Failed to update event');
+          this.notify.error('Failed to update event');
         }
       });
   }
@@ -159,7 +161,7 @@ export class EventsById implements OnInit {
 
   submitImage() {
     if (!this.selectedFile || !this.eventId) {
-      alert('Please select a file');
+      this.notify.info('Please select a file');
       return;
     }
 
@@ -168,13 +170,13 @@ export class EventsById implements OnInit {
 
     this.eventService.uploadEventImage(this.eventId,formData).subscribe({
       next: (res:any) => {
-        alert('Image uploaded successfully!');
+        this.notify.success('Image uploaded successfully!');
         this.selectedFile = null;
         this.isImageAdd.set(false);
         this.loadEventData();
       },
       error: (err:any) => {
-        alert('Image upload failed.');
+        this.notify.error('Image upload failed.');
       }
     });
   }
@@ -185,7 +187,7 @@ export class EventsById implements OnInit {
     console.log(this.prevTicketvalues())
     if(this.ticketTypeForm.value.totalQuantity < this.prevTicketvalues().totalQuantity && 
       this.prevTicketvalues().bookedQuantity > this.ticketTypeForm.value.totalQuantity){
-        alert("Invalid updation! \n The updated quantity is lesser than the booked seats!");
+        this.notify.info("Caution! The updated quantity is lesser than the booked seats!");
         return;
     }
     // debugger;
@@ -197,25 +199,25 @@ export class EventsById implements OnInit {
     if (ticketData.id) {
       this.ticketTypeService.updateTicketType(ticketData.id, ticketData).subscribe({
         next: () => {
-          alert('Ticket type updated');
+          this.notify.success('Ticket type updated');
           this.ticketTypeForm.reset();
           this.isAddingTicketType.set(false);
           this.loadEventData();
         },
         error: () => {
-          alert('Failed to save ticket type');
+          this.notify.error('Failed to save ticket type');
         }
       });
     } else {
       this.ticketTypeService.addTicketType(ticketData).subscribe({
         next: () => {
-          alert('Ticket type added');
+          this.notify.success('Ticket type added');
           this.ticketTypeForm.reset();
           this.isAddingTicketType.set(false);
           this.loadEventData();
         },
         error: () => {
-          alert('Failed to save ticket type');
+          this.notify.error('Failed to save ticket type');
         }
       });
     }
@@ -236,11 +238,11 @@ export class EventsById implements OnInit {
     if (!confirm('Are you sure you want to delete this ticket type?')) return;
     this.ticketTypeService.deleteTicketType(typeId).subscribe({
       next: () => {
-        alert('Ticket type deleted');
+        this.notify.success('Ticket type deleted');
         this.loadEventData();
       },
       error: () => {
-        alert('Failed to delete ticket type');
+        this.notify.error('Failed to delete ticket type');
       }
     });
   }
