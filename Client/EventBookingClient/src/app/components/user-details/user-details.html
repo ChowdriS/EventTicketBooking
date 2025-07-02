@@ -25,7 +25,7 @@
         @if(isEditingUsername){
           <button 
             type="button"
-            class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            class="outline_btn"
             (click)="CancelEdit()"
           >
             Cancel
@@ -33,7 +33,7 @@
         }
         <button
           type="button"
-          class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+          class="black_btn"
           (click)="isEditingUsername ? saveUsername() : isEditingUsername = true"
         >
           {{ isEditingUsername ? 'Save' : 'Edit' }}
@@ -49,7 +49,7 @@
 
   <div class="space-y-2">
     <button 
-      class="w-full px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+      class="black_btn w-full"
       (click)="isChangingPassword = !isChangingPassword"
     >
       {{ isChangingPassword ? 'Hide Change Password Form' : 'Change Password' }}
@@ -88,7 +88,7 @@
         <div class="flex flex-col sm:flex-row gap-4 mt-4">
           <button
             type="button"
-            class="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-4 py-2 black_btn disabled:opacity-50 disabled:cursor-not-allowed"
             (click)="changePassword()"
             [disabled]="passwordForm.invalid"
           >
