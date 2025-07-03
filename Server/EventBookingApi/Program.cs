@@ -16,20 +16,20 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.WebHost.UseUrls("http://0.0.0.0:5000");
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var configuration = new ConfigurationBuilder()
-    .AddJsonFile("serilog.json", optional: false, reloadOnChange: true)
-    .Build();
+// var configuration = new ConfigurationBuilder()
+//     .AddJsonFile("serilog.json", optional: false, reloadOnChange: true)
+//     .Build();
 
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(configuration)
-    .Enrich.FromLogContext()
-    .CreateLogger();
+// Log.Logger = new LoggerConfiguration()
+//     .ReadFrom.Configuration(configuration)
+//     .Enrich.FromLogContext()
+//     .CreateLogger();
 
 builder.Host.UseSerilog();
 
@@ -84,6 +84,8 @@ builder.Services.AddTransient<IRepository<Guid, Ticket>, TicketRepository>();
 builder.Services.AddTransient<IRepository<Guid, TicketType>, TicketTypeRepository>();
 builder.Services.AddTransient<IRepository<Guid, Payment>, PaymentRepository>();
 builder.Services.AddTransient<IRepository<Guid, BookedSeat>, BookedSeatRepository>();
+builder.Services.AddTransient<IRepository<Guid, EventImage>, EventImageRepository>();
+builder.Services.AddTransient<IRepository<Guid, Cities>, CityRepository>();
 #endregion
 
 #region Services
@@ -109,8 +111,8 @@ builder.Services.AddRateLimiter(options =>
 {
     options.AddFixedWindowLimiter("fixed", opt =>
     {
-        opt.Window = TimeSpan.FromSeconds(10);
-        opt.PermitLimit = 5;
+        opt.Window = TimeSpan.FromSeconds(60);
+        opt.PermitLimit = 1000;
         opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
         opt.QueueLimit = 0;
     });
@@ -138,7 +140,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://127.0.0.1:5500")
+        policy.WithOrigins("http://127.0.0.1:5500","http://localhost:4200")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();

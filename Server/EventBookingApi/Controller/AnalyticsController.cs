@@ -49,7 +49,7 @@ public class AnalyticController : ControllerBase
         {
             var userId = _otherFunctionalities.GetLoggedInUserId(User);
             var data = await _analyticService.GetTotalEarnings(userId);
-            return Ok(ApiResponse<object>.SuccessResponse("Total Earning fetched Successfully!", new { earnings = data }));
+            return Ok(ApiResponse<object>.SuccessResponse("Total Earning fetched Successfully!", data));
         }
         catch (Exception ex)
         {

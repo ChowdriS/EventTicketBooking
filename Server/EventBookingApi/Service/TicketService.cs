@@ -228,7 +228,7 @@ public class TicketService : ITicketService
     public async Task<IEnumerable<TicketResponseDTO>> GetMyTickets(Guid userId, int pageNumber, int pageSize)
     {
         var tickets = (await _ticketRepository.GetAll())
-            .Where(t => t.UserId == userId && t.Status != TicketStatus.Cancelled)
+            .Where(t => t.UserId == userId)
             .ToList();
         var responses = new List<TicketResponseDTO>();
         foreach (var ticket in tickets)
@@ -242,10 +242,11 @@ public class TicketService : ITicketService
     public async Task<TicketResponseDTO> GetTicketById(Guid ticketId, Guid userId)
     {
         var ticket = await _ticketRepository.GetById(ticketId);
-        if (ticket == null || (ticket.UserId != userId && ticket?.Event?.ManagerId != userId))
+        var user = await _userRepository.GetById(userId);
+        if (ticket == null || (ticket.UserId != userId && ticket?.Event?.ManagerId != userId && user.Role != UserRole.Admin))
             throw new UnauthorizedAccessException("Access denied");
-        if (ticket.Status == TicketStatus.Cancelled) throw new Exception("The Ticket is already Cancelled!");
-        var eventObj = await _eventRepository.GetById(ticket.EventId);
+        // if (ticket.Status == TicketStatus.Cancelled) throw new Exception("The Ticket is already Cancelled!");
+        var eventObj = await _eventRepository.GetById(ticket!.EventId);
         var ticketType = await _ticketTypeRepository.GetById(ticket.TicketTypeId);
         Payment? payment = ticket.PaymentId.HasValue
         ? await _paymentRepository.GetById(ticket.PaymentId.Value)
@@ -270,11 +271,11 @@ public class TicketService : ITicketService
         var evt = await _eventRepository.GetById(eventId);
         var user = await _userRepository.GetById(requesterId);
         if (user == null) throw new Exception("User not found");
-        if (evt == null || evt.IsDeleted) throw new Exception("Event not found");
+        if (evt == null) throw new Exception("Event not found");
         if (user.Role != UserRole.Admin && evt.ManagerId != requesterId)
             throw new UnauthorizedAccessException("Access denied");
         var tickets = (await _ticketRepository.GetAll())
-            .Where(t => t.EventId == eventId && t.Status != TicketStatus.Cancelled)
+            .Where(t => t.EventId == eventId)
             .ToList();
         var responses = new List<TicketResponseDTO>();
         foreach (var ticket in tickets)
@@ -290,7 +291,10 @@ public class TicketService : ITicketService
         var ticket = await _ticketRepository.GetById(ticketId);
         if (ticket == null || ticket.UserId != userId)
             throw new UnauthorizedAccessException("Unauthorized");
-
+        if (ticket.Status == TicketStatus.Cancelled)
+        {
+            throw new Exception("The Ticket is Already Cancelled!");
+        }
         var eventObj = await _eventRepository.GetById(ticket.EventId);
         var ticketType = await _ticketTypeRepository.GetById(ticket.TicketTypeId);
         var payment = ticket.PaymentId.HasValue
@@ -309,26 +313,23 @@ public class TicketService : ITicketService
         await _notificationService.NotifyUser(
             userId,
             $"Ticket Generated for {eventObj?.Title}",
-            "TicketGenerated"
+            "Success"
         );
         using (var ms = new System.IO.MemoryStream())
         {
-            var document = new PdfDocument();  // Create a new PDF document
-            var page = document.AddPage();    // Add a new page to the document
-            var gfx = XGraphics.FromPdfPage(page);  // Create drawing context for the page
+            var document = new PdfDocument();  
+            var page = document.AddPage();    
+            var gfx = XGraphics.FromPdfPage(page); 
             var font = new XFont("Arial", 12);
 
-            // Set up content positioning
             double xPos = 40;
             double yPos = 50;
 
-            // Title
             gfx.DrawString("TICKET RECEIPT", new XFont("Arial", 18, XFontStyle.Bold), XBrushes.Black, new XRect(xPos, yPos, page.Width, page.Height), XStringFormats.TopCenter);
             yPos += 40;
             gfx.DrawString("------------------------------------------------------------------------------------------------------------------------------------", font, XBrushes.Black, xPos, yPos);
             yPos += 20;
 
-            // Event Details
             gfx.DrawString($"Ticket Id : {ticket.Id}", font, XBrushes.Black, xPos, yPos);
             yPos += 20;
             gfx.DrawString($"Event: {eventObj?.Title}", font, XBrushes.Black, xPos, yPos);
@@ -369,7 +370,6 @@ public class TicketService : ITicketService
 
             gfx.DrawString("Thank you for your booking!", new XFont("Arial", 12, XFontStyle.Italic), XBrushes.Black, new XRect(xPos, yPos, page.Width, page.Height), XStringFormats.TopCenter);
 
-            // Save to memory stream and return as byte array
             document.Save(ms);
             return ms.ToArray();
         }

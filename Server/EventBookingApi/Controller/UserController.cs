@@ -28,7 +28,7 @@ namespace EventBookingApi.Controller
         }
 
         [HttpPost("admin")]
-        // [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddAdmin([FromBody] UserAddRequestDTO dto)
         {
             try
@@ -85,6 +85,21 @@ namespace EventBookingApi.Controller
                 return BadRequest(ApiResponse<object>.ErrorResponse("Getting your details operation failed!", new { ex.Message }));
             }
         }
+        [HttpGet("all")]
+        [Authorize(Roles="Admin")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                // var userId = _otherFuntionailities.GetLoggedInUserId(User);
+                var users = await _userService.GetAll();
+                return Ok(ApiResponse<object>.SuccessResponse("All User Details are succesfully fetched!", users));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<object>.ErrorResponse("operation failed!", new { ex.Message }));
+            }
+        }
 
         [HttpPut("update")]
         [Authorize]
@@ -118,7 +133,7 @@ namespace EventBookingApi.Controller
             }
         }
         [HttpDelete("delete/{id}")]
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
             try

@@ -106,6 +106,15 @@ public class UserService : IUserService
         var user = await _userRepository.GetById(Id);
         return _mapper.UserResponseDTOMapper(user);
     }
+    public async Task<ICollection<UserAllResponseDTO>> GetAll()
+    {
+        var users = await _userRepository.GetAll();
+        ICollection<UserAllResponseDTO> response = [];
+        foreach (var item in users){
+            response.Add(_mapper.UserALLResponseDTOMapper(item));
+        }
+        return response;
+    }
 
     public async Task<UserResponseDTO> deleteUser(Guid Id, Guid userId)
     {

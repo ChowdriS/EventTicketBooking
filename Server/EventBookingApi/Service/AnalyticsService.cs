@@ -20,17 +20,43 @@ public class AnalyticsService : IAnalyticsService
         _ticketRepository = ticketRepository;
         _userRepository = userRepository;
     }
+    // public async Task<Dictionary<string, decimal>> GetEventsTotalEarnings()
+    // {
+    //     var allTickets = await _ticketRepository.GetAll();
+    //     var validTickets = allTickets.Where(t => t.Status == TicketStatus.Booked || t.Status == TicketStatus.Used);
+    //     var events = await _eventRepository.GetAll();
+    //     var earnings = events.ToDictionary(
+    //         e => e.Title ?? "",
+    //         e => validTickets.Where(t => t.EventId == e.Id).Sum(t => t.TotalPrice)
+    //     );
 
-    public async Task<decimal> GetTotalEarnings(Guid managerId)
+    //     return earnings;
+    // }
+    public async Task<Dictionary<string, decimal>> GetTotalEarnings(Guid managerId)
     {
         var allTickets = await _ticketRepository.GetAll();
         var validTickets = allTickets.Where(t => t.Status == TicketStatus.Booked || t.Status == TicketStatus.Used);
         var events = await _eventRepository.GetAll();
-        var managedEventIds = events.Where(e => e.ManagerId == managerId).Select(e => e.Id);
-        validTickets = validTickets.Where(t => managedEventIds.Contains(t.EventId));
+        var managedEvents = events.Where(e => e.ManagerId == managerId).ToList();
 
-        return validTickets.Sum(t => t.TotalPrice);
+        var earnings = managedEvents.ToDictionary(
+            e => e.Title ?? "",
+            e => validTickets.Where(t => t.EventId == e.Id).Sum(t => t.TotalPrice)
+        );
+
+        return earnings;
     }
+
+
+    // public async Task<decimal> GetTotalEarnings(Guid managerId)
+    // {
+    //     var allTickets = await _ticketRepository.GetAll();
+    //     var validTickets = allTickets.Where(t => t.Status == TicketStatus.Booked || t.Status == TicketStatus.Used);
+    //     var events = await _eventRepository.GetAll();
+    //     var managedEventIds = events.Where(e => e.ManagerId == managerId).Select(e => e.Id);
+    //     validTickets = validTickets.Where(t => managedEventIds.Contains(t.EventId));
+    //     return validTickets.Sum(t => t.TotalPrice);
+    // }
 
     public async Task<List<BookingTrendDTO>> GetBookingTrends()
     {

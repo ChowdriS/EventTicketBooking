@@ -25,7 +25,7 @@ public class TicketTypeService : ITicketTypeService
     {
         var ev = await _eventRepository.GetById(eventId);
         var ticketTypes = await _ticketTypeRepository.GetAll();
-        var filtered = ticketTypes.Where(t => t.EventId == eventId && t.IsDeleted == false);
+        var filtered = ticketTypes.Where(t => t.EventId == eventId);
         return filtered.Select(_mapper.TicketTypeResponseDTOMapper);
     }
 

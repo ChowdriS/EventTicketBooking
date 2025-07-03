@@ -1,4 +1,5 @@
 using EventBookingApi.Interface;
+using EventBookingApi.Model;
 using EventBookingApi.Model.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,9 +43,58 @@ namespace EventBookingApi.Controller
             }
             catch (Exception ex)
             {
-                return NotFound(ApiResponse<object>.ErrorResponse("Event not found", new { ex.Message }));
+                return BadRequest(ApiResponse<object>.ErrorResponse("Event not found", new { ex.Message }));
             }
         }
+        // [HttpPut("{eventId}/image")]
+        // public async Task<IActionResult> UpdateEventImage(Guid eventId, IFormFile imageFile)
+        // {
+            
+
+        //     try
+        //     {
+        //         if (imageFile == null || imageFile.Length == 0)
+        //             throw new Exception("No image file uploaded.");
+                
+        //         var updatedEvent = await _eventService.UpdateEventImageUrl(eventId, imageFile);
+
+        //         return Ok(ApiResponse<object>.SuccessResponse("Event image updated", updatedEvent));
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return BadRequest(ApiResponse<object>.ErrorResponse("Failed to update image", new { ex.Message }));
+        //     }
+        // }
+        // [HttpGet("image")]
+        // public  IActionResult GetEventImage(string? imageUrl)
+        // {
+        //     if (string.IsNullOrWhiteSpace(imageUrl))
+        //         return BadRequest("Image path is required");
+        //     // /Users/presidio/Desktop/GenSpark_Training/DotNetWebApi_Project/EventBookingApi/wwwroot/uploads/
+        //     // events/5a445565-e6b4-496a-a519-721cb5618e02.webp
+        //     var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imageUrl.TrimStart('/'));
+        //     // System.Console.WriteLine(imagePath);
+        //     if (!System.IO.File.Exists(imagePath))
+        //         return NotFound("Image not found");
+
+        //     var contentType = GetContentType(imagePath);
+        //     var imageBytes = System.IO.File.ReadAllBytes(imagePath);
+
+        //     return File(imageBytes, contentType);
+        // }
+
+        // private string GetContentType(string path)
+        // {
+        //     var ext = Path.GetExtension(path).ToLowerInvariant();
+        //     return ext switch
+        //     {
+        //         ".jpg" or ".jpeg" => "image/jpeg",
+        //         ".png" => "image/png",
+        //         ".gif" => "image/gif",
+        //         ".webp" => "image/webp", 
+        //         _ => "application/octet-stream"
+        //     };
+        // }
 
         [HttpPost]
         [Authorize(Roles = "Admin,Manager")]
@@ -110,17 +160,30 @@ namespace EventBookingApi.Controller
         }
 
         [HttpGet("filter")]
-        public async Task<IActionResult> FilterEvents([FromQuery] string searchElement, [FromQuery] DateTime? date,
+        public async Task<IActionResult> FilterEvents([FromQuery]EventCategory? category, [FromQuery]Guid? cityId,[FromQuery] EventType? type,[FromQuery] string? searchElement, [FromQuery] DateTime? date,
                                                     [FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
             try
             {
-                var events = await _eventService.FilterEvents(searchElement, date, pageNumber, pageSize);
+                var events = await _eventService.FilterEvents(category,cityId,type,searchElement!, date, pageNumber, pageSize);
                 return Ok(ApiResponse<object>.SuccessResponse("Filtered events fetched", events));
             }
             catch (Exception ex)
             {
                 return BadRequest(ApiResponse<object>.ErrorResponse("Failed to filter events", new { ex.Message }));
+            }
+        }
+        [HttpGet("cities")]
+        public async Task<IActionResult> GetAllCities()
+        {
+            try
+            {
+                var events = await _eventService.getAllCities();
+                return Ok(ApiResponse<object>.SuccessResponse("Cities Fetched", events));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<object>.ErrorResponse("Cities fetch failed", new { ex.Message }));
             }
         }
     }

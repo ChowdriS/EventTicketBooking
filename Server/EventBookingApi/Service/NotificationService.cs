@@ -23,12 +23,12 @@ public class NotificationService : INotificationService
         }
         public async Task NotifyUser(Guid userId, string message, string notificationType)
         {
-            await _hubContext.Clients.Group($"user_{userId}").SendAsync("ReceiveNotification", message, notificationType);
+            await _hubContext.Clients.Group($"user_{userId}").SendAsync("ReceiveNotification", notificationType,message);
         }
 
         public async Task NotifyAdmins(string message, string notificationType)
         {
-            await _hubContext.Clients.Group("admins").SendAsync("ReceiveNotification", message, notificationType);
+            await _hubContext.Clients.Group("admins").SendAsync("ReceiveNotification", notificationType, message);
         }
 
         public async Task NotifyEventManagers(Guid eventId, string message, string notificationType)
@@ -37,7 +37,7 @@ public class NotificationService : INotificationService
             if (eventObj?.ManagerId != null)
             {
                 await _hubContext.Clients.Group($"manager_{eventObj.ManagerId}")
-                    .SendAsync("ReceiveNotification", message, notificationType);
+                    .SendAsync("ReceiveNotification", notificationType, message);
             }
         }
     }

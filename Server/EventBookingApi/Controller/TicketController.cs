@@ -13,6 +13,7 @@ namespace EventBookingApi.Controller
     {
         private readonly ITicketService _ticketService;
         private readonly IOtherFunctionalities _otherFuntionailities;
+
         public TicketController(ITicketService ticketService,
                                 IOtherFunctionalities otherFuntionailities)
         {

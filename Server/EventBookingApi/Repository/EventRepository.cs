@@ -12,11 +12,27 @@ public class EventRepository : Repository<Guid, Event>
 
     public override async Task<Event> GetById(Guid id)
     {
-        return await _eventContext.Events.SingleOrDefaultAsync(e => e.Id == id);
+        var ev = await _eventContext.Events
+            .Include(e => e.TicketTypes)
+            .Include(e => e.Tickets)
+            .Include(e => e.BookedSeats)
+            .Include(e => e.Images)
+            .Include(e => e.City)
+            .SingleOrDefaultAsync(e => e.Id == id);
+
+        if (ev == null)
+            throw new KeyNotFoundException($"Event with id {id} not found.");
+
+        return ev;
     }
 
     public override async Task<IEnumerable<Event>> GetAll()
     {
-        return await _eventContext.Events.ToListAsync();
+        return await _eventContext.Events
+            .Include(e => e.TicketTypes)
+            .Include(e => e.Tickets)
+            .Include(e => e.Images)
+            .Include(e => e.City)
+            .Include(e => e.BookedSeats).ToListAsync();
     }
 }

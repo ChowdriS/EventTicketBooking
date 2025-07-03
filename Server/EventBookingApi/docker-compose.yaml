@@ -1,0 +1,44 @@
+version: '1.0'
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=mydb;Username=postgres;Password=postgres
+    networks:
+      - mynet
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    networks:
+      - mynet
+
+  frontend:
+    build:
+      context: /Users/presidio/Desktop/EventTicketBooking/Client/EventBookingClient
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    networks:
+      - mynet
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
+
+networks:
+  mynet:

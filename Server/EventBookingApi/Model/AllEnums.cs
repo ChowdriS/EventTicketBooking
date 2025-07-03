@@ -7,6 +7,18 @@ public enum UserRole
     Manager
 }
 
+public enum EventCategory
+{
+    Music = 0,
+    Tech = 1,
+    Art = 2,
+    Education = 3,
+    Sports = 4,
+    Business = 5,
+    Festival = 6
+}
+
+
 public enum EventType
 {
     Seatable = 0,

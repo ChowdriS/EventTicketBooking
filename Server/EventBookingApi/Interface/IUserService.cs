@@ -6,6 +6,8 @@ namespace EventBookingApi.Interface;
 
 public interface IUserService
 {
+
+    public Task<ICollection<UserAllResponseDTO>> GetAll();
     public Task<UserResponseDTO> AddUser(UserAddRequestDTO dto);
     public Task<UserResponseDTO> AddManager(UserAddRequestDTO dto);
     public Task<UserResponseDTO> AddAdmin(UserAddRequestDTO dto);

@@ -12,5 +12,5 @@ public interface IOtherFunctionalities
     public Guid GetLoggedInUserId(ClaimsPrincipal User);
     public Task<PaginatedResultDTO<EventResponseDTO>> GetPaginatedEvents(int pageNumber, int pageSize);
     public Task<PaginatedResultDTO<EventResponseDTO>> GetPaginatedEventsByManager(Guid managerId, int pageNumber, int pageSize);
-    public Task<PaginatedResultDTO<EventResponseDTO>> GetPaginatedEventsByFilter(string? searchElement, DateTime? date, int pageNumber, int pageSize);
+    public Task<PaginatedResultDTO<EventResponseDTO>> GetPaginatedEventsByFilter(EventCategory? category, Guid? cityId,EventType? type, string? searchElement, DateTime? date, int pageNumber, int pageSize);
 }

@@ -5,6 +5,7 @@ using EventBookingApi.Context;
 using EventBookingApi.Interface;
 using EventBookingApi.Model;
 using EventBookingApi.Model.DTO;
+using EventBookingApi.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventBookingApi.Misc;
@@ -43,7 +44,7 @@ public class OtherFunctionalities : IOtherFunctionalities
             throw new UnauthorizedAccessException("Access denied");
 
         var query = _eventContext.Tickets
-            .Where(t => t.EventId == eventId && t.Status != TicketStatus.Cancelled)
+            .Where(t => t.EventId == eventId)
             .OrderByDescending(t => t.BookedAt);
 
         var totalItems = await query.CountAsync();
@@ -72,7 +73,7 @@ public class OtherFunctionalities : IOtherFunctionalities
     public async Task<PaginatedResultDTO<TicketResponseDTO>> GetPaginatedMyTickets(Guid userId, int pageNumber, int pageSize)
     {
         var query = _eventContext.Tickets
-            .Where(t => t.UserId == userId && t.Status != TicketStatus.Cancelled)
+            .Where(t => t.UserId == userId)
             .OrderByDescending(t => t.BookedAt);
 
         var totalItems = await query.CountAsync();
@@ -102,8 +103,14 @@ public class OtherFunctionalities : IOtherFunctionalities
     public async Task<PaginatedResultDTO<EventResponseDTO>> GetPaginatedEvents(int pageNumber, int pageSize)
     {
         var query = _eventContext.Events
-            .Where(e => !e.IsDeleted)
-            .OrderByDescending(e => e.EventDate);
+                .Where(e => !e.IsDeleted)
+                .Include(e => e.TicketTypes)
+                .Include(e => e.Tickets)
+                .Include(e => e.BookedSeats)
+                .Include(e => e.Images)
+                .Include(e => e.City)
+                .OrderByDescending(e => e.EventDate);
+
 
         var totalItems = await query.CountAsync();
 
@@ -126,7 +133,12 @@ public class OtherFunctionalities : IOtherFunctionalities
     public async Task<PaginatedResultDTO<EventResponseDTO>> GetPaginatedEventsByManager(Guid managerId, int pageNumber, int pageSize)
     {
         var query = _eventContext.Events
-            .Where(e => e.ManagerId == managerId && !e.IsDeleted)
+            .Where(e => e.ManagerId == managerId)
+            .Include(e => e.TicketTypes)
+            .Include(e => e.Tickets)
+            .Include(e => e.BookedSeats)
+            .Include(e => e.Images)
+            .Include(e => e.City)
             .OrderByDescending(e => e.EventDate);
 
         var totalItems = await query.CountAsync();
@@ -146,12 +158,22 @@ public class OtherFunctionalities : IOtherFunctionalities
             TotalItems = totalItems
         };
     }
-    public async Task<PaginatedResultDTO<EventResponseDTO>> GetPaginatedEventsByFilter(string? searchElement, DateTime? date, int pageNumber, int pageSize)
+    public async Task<PaginatedResultDTO<EventResponseDTO>> GetPaginatedEventsByFilter(EventCategory? category, Guid? cityId,EventType? type,string? searchElement, DateTime? date, int pageNumber, int pageSize)
     {
+        // System.Console.WriteLine(EventType.Seatable == type);
+        // System.Console.WriteLine(0 == type);
         var query = _eventContext.Events.Where(e =>
-                !e.IsDeleted &&
-                (string.IsNullOrEmpty(searchElement) || e.Description!.ToLower().Contains(searchElement.ToLower())) &&
-                (!date.HasValue || e.EventDate.Date == date.Value.Date))
+                (string.IsNullOrEmpty(searchElement) || e.Description!.ToLower().Contains(searchElement.ToLower()) ||
+                 e.Title!.ToLower().Contains(searchElement.ToLower())) &&
+                (!date.HasValue || e.EventDate.Date == date.Value.Date) &&
+                (type ==null || type == e.EventType) &&
+                (category == null || category == e.Category) &&
+                (cityId == null || e.CityId == cityId))
+                .Include(e => e.TicketTypes)
+                .Include(e => e.Tickets)
+                .Include(e => e.BookedSeats)
+                .Include(e => e.Images)
+                .Include(e => e.City)
                 .OrderByDescending(e => e.EventDate);
 
         var events = await query

@@ -5,6 +5,7 @@ namespace EventBookingApi.Model.DTO;
 public class TicketResponseDTO
 {
     public Guid Id { get; set; }
+    public Guid UserId { get; set; }
     public string EventTitle { get; set; } = string.Empty;
     public string TicketType { get; set; } = string.Empty;
     public decimal PricePerTicket { get; set; }
